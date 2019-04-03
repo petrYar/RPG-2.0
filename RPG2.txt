@@ -14,16 +14,19 @@ char **CreateMap(int rows, int cols);
 void FillMap(char **map, int rows, int cols);
 void ShowMap(char **map, int rows, int cols);
 void DeleteMap(char **map, int rows);
+void PlayerCreate(char **map, int rows, int cols);
+void Move(char **map, int rows, int cols);
 
-void Move();
+void PlayerCreate(char **map, int rows, int cols);
 void LocationInfo();
+void MonstersSpawn();
 void Inventory();
 int Attack();
 void AttackCout();
 void Experience();
 void ShowAttackOfEnemy();
 void AttackOfEnemy();
-void ShowInterface();
+void Interface();
 
 int main()
 {
@@ -31,8 +34,8 @@ int main()
 
 	bool exit1 = false;
 	char choice2;
-	int rows = 12;
-	int cols = 12;
+	int rows = rand() % 9 + 12;
+	int cols = rand() % 9 + 12;
 
 	/*
 		int magic, enemyHp, playerHp, playerDamage, playerMp, choice, enemyMp;
@@ -136,6 +139,7 @@ int main()
 	char **map = CreateMap(rows, cols);
 	FillMap(map, rows, cols);
 	ShowMap(map, rows, cols);
+	Move(map, rows, cols);
 
 	/*do
 	{
@@ -148,6 +152,7 @@ int main()
 			{
 			case '1':
 				ShowMap(map, rows, cols);
+				Move(map, rows, cols);
 				break;
 			case '2':
 				break;
@@ -259,7 +264,7 @@ void FillMap(char **map, int rows, int cols)
 			int rRand = rand() % (rows - 2) + 1;
 			int cRand = rand() % (cols - 2) + 1;
 
-			if (map[rRand][cRand] = '#')
+			if (map[rRand][cRand] == '#')
 			{
 				map[rRand][cRand] = ' ';
 				break;
@@ -323,6 +328,8 @@ void FillMap(char **map, int rows, int cols)
 		for (int c = 0; c < cols; c++)
 			if (map[r][c] == '=')
 				map[r][c] = ' ';
+
+	PlayerCreate(map, rows, cols);
 }
 void ShowMap(char **map, int rows, int cols)
 {
@@ -340,3 +347,65 @@ void DeleteMap(char **map, int rows)
 	delete[]map;
 }
 
+void PlayerCreate(char **map, int rows, int cols)
+{
+	do
+	{
+		int rRand = rand() % (rows - 2) + 1;
+		int cRand = rand() % (cols - 2) + 1;
+
+		if (map[rRand][cRand] == ' ')
+		{
+			map[rRand][cRand] = 'o';
+			break;
+		}
+	} while (true);
+}
+void Move(char **map, int rows, int cols)
+{
+	do
+	{
+		int directionOfMove, rCopy, cCopy;
+
+		do
+		{
+			cout << "1 - move up\n2 - move right\n3 - move down\n4 - move left\n";
+			cin >> directionOfMove;
+		} while (directionOfMove < 1 || directionOfMove > 4);
+
+		for (int r = 0; r < rows; r++)
+			for (int c = 0; c < cols; c++)
+				if (map[r][c] == 'o')
+				{
+					rCopy = r;
+					cCopy = c;
+				}
+
+		if (directionOfMove == 1 && map[rCopy - 1][cCopy] == ' ')
+		{
+			map[rCopy][cCopy] = ' ';
+			map[rCopy - 1][cCopy] = 'o';
+			break;
+		}
+		else if (directionOfMove == 2 && map[rCopy][cCopy + 1] == ' ')
+		{
+			map[rCopy][cCopy] = ' ';
+			map[rCopy][cCopy + 1] = 'o';
+			break;
+		}
+		else if (directionOfMove == 3 && map[rCopy + 1][cCopy] == ' ')
+		{
+			map[rCopy][cCopy] = ' ';
+			map[rCopy + 1][cCopy] = 'o';
+			break;
+		}
+		else if (directionOfMove == 4 && map[rCopy][cCopy - 1] == ' ')
+		{
+			map[rCopy][cCopy] = ' ';
+			map[rCopy][cCopy - 1] = 'o';
+			break;
+		}
+	} while (true);
+	system("cls");
+	ShowMap(map, rows, cols);
+}
