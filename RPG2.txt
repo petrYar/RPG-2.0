@@ -1,0 +1,342 @@
+#include <iostream>	
+#include <ctime>	
+#include <cstdlib>	
+#include <Windows.h>	
+using namespace std;
+
+void ShowNameOfGame();
+int ShowAndChooseMainMenu();
+int ShowAndChoosePlayMenu();
+void ShowRules();
+void ShowCreators();
+
+char **CreateMap(int rows, int cols);
+void FillMap(char **map, int rows, int cols);
+void ShowMap(char **map, int rows, int cols);
+void DeleteMap(char **map, int rows);
+
+void Move();
+void LocationInfo();
+void Inventory();
+int Attack();
+void AttackCout();
+void Experience();
+void ShowAttackOfEnemy();
+void AttackOfEnemy();
+void ShowInterface();
+
+int main()
+{
+	srand(time(nullptr));
+
+	bool exit1 = false;
+	char choice2;
+	int rows = 12;
+	int cols = 12;
+
+	/*
+		int magic, enemyHp, playerHp, playerDamage, playerMp, choice, enemyMp;
+		int enemyResistancePhysic, enemyResistanceMagic, playerResistancePhysic, playerResistanceMagic;
+		int enemyPhysicDamage = 100;
+		int enemyMagicDamage = 200;
+		int fireball = 100;
+		int bolter = 60;
+		int fireballMp = 50;
+		int bolterMp = 30;
+		int punch = 50;
+		int kick = 30;
+		int enemyRegeneration = 10;
+		int playerRegeneration = 10;
+		int enemyMpRegeneration = 10;
+		int playerMpRegeneration = 10;
+		int mp = 100;
+		int turn = 1;
+		int manaDrain = 100;
+		int shieldSlam = 50;
+		int shieldSlamMp = 20;
+	*/
+
+	/*
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~В будущем~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	Обновление 3.0
+	|~~~~~~~~~~|
+	Добавление :
+	Лут(через рандом)[3.0]
+	Сборка артефактов за лут(материал)[3.1]
+	Улучшение врага[3.2]
+	Добавление режимов : Лёгкий , Средний, Сложный, Нереальный, Пекло(Только удача!Только хардкор!).[3.3]
+	Обучение(Выбор на начале игры).[3.4]
+	Добавление характеристик.(Голод,Жажда,Усталость,Хп,Мана)[3.5]
+	График(картинка) характеристик.[3.6]
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	*/
+
+	/*
+	cout << "Enter your HP\n";
+	cin >> playerHp;
+	cout << "Enter your MP\n";
+	cin >> playerMp;
+	cout << "Enter HP of enemy\n";
+	cin >> enemyHp;
+	cout << "Enter MP of enemy\n";
+	cin >> enemyMp;
+	cout << "Enter physic resistance of enemy\n";
+	cin >> enemyResistancePhysic;
+	cout << "Enter magic resistance of enemy\n";
+	cin >> enemyResistanceMagic;
+	cout << "Enter physic resistance of player\n";
+	cin >> playerResistancePhysic;
+	cout << "Enter magic resistance of player\n";
+	cin >> playerResistanceMagic;
+
+	if (playerResistancePhysic > 100)
+	{
+		cout << "Nothing can have resistance more than 100% . Resistance changed to 100 %\n";
+		playerResistancePhysic = 100;
+	}
+	if (playerResistanceMagic > 100)
+	{
+		cout << "Nothing can have resistance more than 100% . Resistance changed to 100 %\n";
+		playerResistanceMagic = 100;
+	}
+	if (enemyResistanceMagic > 100)
+	{
+		cout << "Nothing can have resistance more than 100% . Resistance changed to 100 %\n";
+		enemyResistanceMagic = 100;
+	}
+	if (enemyResistancePhysic > 100)
+	{
+		cout << "Nothing can have resistance more than 100% . Resistance changed to 100 %\n";
+		enemyResistancePhysic = 100;
+	}
+
+	if (enemyResistancePhysic < 0)
+	{
+		cout << "Nothing can have resistance less than 100% . Resistance changed to 0 %\n";
+		enemyResistancePhysic = 0;
+	}
+	if (enemyResistanceMagic < 0)
+	{
+		cout << "Nothing can have resistance less than 100% . Resistance changed to 0 %\n";
+		enemyResistanceMagic = 0;
+	}
+	if (playerResistanceMagic < 0)
+	{
+		cout << "Nothing can have resistance less than 100% . Resistance changed to 0 %\n";
+		playerResistanceMagic = 0;
+	}
+	if (playerResistancePhysic < 0)
+	{
+		cout << "Nothing can have resistance less than 100% . Resistance changed to 0 %\n";
+		playerResistancePhysic = 0;
+	}
+*/
+
+///ShowNameOfGame();
+	char **map = CreateMap(rows, cols);
+	FillMap(map, rows, cols);
+	ShowMap(map, rows, cols);
+
+	/*do
+	{
+		char choice1 = ShowAndChooseMainMenu();
+		switch (choice1)
+		{
+		case '1':
+			choice2 = ShowAndChoosePlayMenu();
+			switch (choice2)
+			{
+			case '1':
+				ShowMap(map, rows, cols);
+				break;
+			case '2':
+				break;
+			default:
+				cout << "Incorrectly\n";
+				break;
+			}
+			break;
+		case '2':
+			ShowRules();
+			break;
+		case '3':
+			ShowCreators();
+			break;
+		case '4':
+			exit1 = true;
+			break;
+		default:
+			cout << "Incorrectly\n";
+			break;
+		}
+	} while (exit1 == false);*/
+
+	DeleteMap(map, rows);
+
+	system("pause");
+	return 0;
+}
+void ShowNameOfGame()
+{
+	char screen[] = "RPG Game";
+	for (int i = 0; i < 8; i++)
+	{
+		cout << screen[i];
+		int num = rand() % 101 + 50;
+		Sleep(num);
+	}
+	cout << endl;
+}
+
+int ShowAndChooseMainMenu()
+{
+	cout << "1 - Play\n";
+	cout << "2 - Rules\n";
+	cout << "3 - Creators\n";
+	cout << "4 - Exit\n";
+
+	char choice1;
+	do
+	{
+		cin >> choice1;
+		if (choice1 < '1' || choice1 > '4')
+			cout << "Incorrectly\n";
+		else
+			break;
+	} while (true);
+	return choice1;
+
+}
+int ShowAndChoosePlayMenu()
+{
+	cout << "1 - Start dungeon\n";
+	cout << "2 - Return to main menu\n";
+
+	char choice2;
+	do
+	{
+		cin >> choice2;
+		if (choice2 < '1' || choice2 > '2')
+			cout << "Incorrectly\n";
+		else
+			break;
+	} while (true);
+	return choice2;
+}
+void ShowRules()
+{
+	cout << "Fight. Explore the world. Find loot. Picking up objects. Craft. Kill. And Win.\n";
+}
+void ShowCreators()
+{
+	char creator[] = "Petrashek Yaroslav";
+	for (int i = 0; i < 18; i++)
+	{
+		cout << creator[i];
+		int temp = rand() % 101 + 50;
+		Sleep(temp);
+	}
+	cout << endl;
+}
+
+char **CreateMap(int rows, int cols)
+{
+	char **map = new char*[rows];
+	for (int i = 0; i < rows; i++)
+		map[i] = new char[cols];
+	return map;
+}
+void FillMap(char **map, int rows, int cols)
+{
+	for (int r = 0; r < rows; r++)
+		for (int c = 0; c < cols; c++)
+			map[r][c] = '#';
+
+	for (int a = 0; a < ((rows + cols) / 2) / 4; a++)
+	{
+		do
+		{
+			int rRand = rand() % (rows - 2) + 1;
+			int cRand = rand() % (cols - 2) + 1;
+
+			if (map[rRand][cRand] = '#')
+			{
+				map[rRand][cRand] = ' ';
+				break;
+			}
+		} while (true);
+
+		for (int i = 0; i < 10; i++)
+		{
+			int direction = rand() % 4 + 1;
+
+			switch (direction)
+			{
+			case 1://up
+				for (int r = 0; r < rows; r++)
+					for (int c = 0; c < cols; c++)
+						if (map[r][c] == ' ')
+							if ((map[r - 1][c] != ' ' && map[r - 1][c + 1] != ' ' && map[r - 1][c - 1] != ' ') && r - 1 > 1)
+							{
+								map[r - 1][c] = ' ';
+								map[r][c] = '=';
+							}
+				break;
+			case 2://right
+				for (int r = 0; r < rows; r++)
+					for (int c = 0; c < cols; c++)
+						if (map[r][c] == ' ')
+							if ((map[r][c + 1] != ' ' && map[r - 1][c + 1] != ' ' && map[r + 1][c + 1] != ' ') && c + 1 < cols - 1)
+							{
+								map[r][c + 1] = ' ';
+								map[r][c] = '=';
+							}
+				break;
+			case 3://down
+				for (int r = 0; r < rows; r++)
+					for (int c = 0; c < cols; c++)
+						if (map[r][c] == ' ')
+							if ((map[r + 1][c] != ' ' && map[r + 1][c + 1] != ' ' && map[r + 1][c - 1] != ' ') && r + 1 < rows - 1)
+							{
+								map[r + 1][c] = ' ';
+								map[r][c] = '=';
+							}
+				break;
+			case 4://left
+				for (int r = 0; r < rows; r++)
+					for (int c = 0; c < cols; c++)
+						if (map[r][c] == ' ')
+							if ((map[r][c - 1] != ' ' && map[r - 1][c - 1] != ' ' && map[r + 1][c - 1] != ' ') && c - 1 > 1)
+							{
+								map[r][c - 1] = ' ';
+								map[r][c] = '=';
+							}
+				break;
+			default:
+				cout << "Error\n";
+				break;
+			}
+		}
+	}
+
+	for (int r = 0; r < rows; r++)
+		for (int c = 0; c < cols; c++)
+			if (map[r][c] == '=')
+				map[r][c] = ' ';
+}
+void ShowMap(char **map, int rows, int cols)
+{
+	for (int r = 0; r < rows; r++)
+	{
+		for (int c = 0; c < cols; c++)
+			cout << map[r][c];
+		cout << endl;
+	}
+}
+void DeleteMap(char **map, int rows)
+{
+	for (int i = 0; i < rows; i++)
+		delete[]map[i];
+	delete[]map;
+}
+
