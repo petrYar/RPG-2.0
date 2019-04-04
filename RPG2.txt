@@ -20,36 +20,39 @@ void EnterNameOfCharacter(char name[], const int SIZEOFNAME);
 void PlayerCreate(char **map, int rows, int cols);
 void Move(char **map, int rows, int cols);
 
-void Interface(int strength, int strengthExp, int agility, int agilityExp, int intelligence, int intelligenceExp, 
-	int lifeForce, int lifeForceExp, int luck, int luckExp, int adaptivity, int adaptivityExp, int Experience);
-void InventoryShow();
+void Interface(char name[], const int SIZEOFNAME, int strength, int strengthExp, int agility, int agilityExp, int intelligence, int intelligenceExp,
+	int lifeForce, int lifeForceExp, int endurance, int enduranceExp, int luck, int luckExp, int adaptivity, bool adaptiveSkills, int experience, int lvl);
 
 void MonstersSpawn();
 int Attack();
 void AttackCout();
-void Experience();
+void experience();
 void ShowAttackOfEnemy();
 void AttackOfEnemy();
 void LootGenerator();
+void InventoryShow();
 void LocationInfo();
 
 int main()
 {
 	srand(time(nullptr));
 
+	int lvl = 0;
+	int experience = 0;
+	int lifeForce = 10;
+	int lifeForceExp = 0;
 	int strength = 10;
 	int strengthExp = 0;
 	int agility = 10;
 	int agilityExp = 0;
 	int intelligence = 10;
 	int intelligenceExp = 0;
-	int lifeForce = 10;
-	int lifeForceExp = 0;
+	int endurance = 10;
+	int enduranceExp = 0;
 	int luck = 1;
 	int luckExp = 0;
 	int adaptivity = 0;
-	int adaptivityExp = 0;
-	int Experience = 0;
+	bool adaptiveSkills = false;
 	///int leadership = 1;
 	///int leadershipExp = 0;
 
@@ -158,16 +161,15 @@ int main()
 	}
 */
 
-///ShowNameOfGame();
+	///ShowNameOfGame();
 	char **map = CreateMap(rows, cols);
 	///EnterNameOfCharacter(name, SIZEOFNAME);
-	///for (int i = 0; i < SIZEOFNAME; i++)
-	///	cout << name[i];
-	///cout << endl;
 	///FillMap(map, rows, cols);
 	///ShowMap(map, rows, cols);
 	///Move(map, rows, cols);
-	Interface(strength, strengthExp, agility, agilityExp, intelligence, intelligenceExp, lifeForce, lifeForceExp, luck, luckExp, adaptivity, adaptivityExp, Experience);
+	///Interface(name, SIZEOFNAME, strength, strengthExp, agility, agilityExp, intelligence, intelligenceExp,
+	///	lifeForce, lifeForceExp, endurance, enduranceExp, luck, luckExp, adaptivity, adaptiveSkills, experience, lvl);
+
 
 	/*do
 	{
@@ -444,15 +446,28 @@ void Move(char **map, int rows, int cols)
 	ShowMap(map, rows, cols);
 }
 
-void Interface(int strength, int strengthExp, int agility, int agilityExp, int intelligence, int intelligenceExp,
-	int lifeForce, int lifeForceExp, int luck, int luckExp, int adaptivity, int adaptivityExp, int Experience)
+void Interface(char name[], const int SIZEOFNAME, int strength, int strengthExp, int agility, int agilityExp, int intelligence, int intelligenceExp,
+	int lifeForce, int lifeForceExp, int endurance, int enduranceExp, int luck, int luckExp, int adaptivity, bool adaptiveSkills, int experience, int lvl)
 {
-
+	for (int i = 0; i < SIZEOFNAME; i++)
+		cout << name[i];
+	cout << "\tExperience:" << experience << "\tLvl:" << lvl << endl;
+	cout << "LifeForce:\tExp:" << lifeForceExp << "/100\tLvl:" << lifeForce << endl;
+	cout << "\t\tHp:" << /*playerHp*/lifeForce * 20 << "/" << lifeForce * 20 << endl;
+	cout << "Strength:\tExp:" << strengthExp << "/100\tLvl:" << strength << endl;
+	cout << "\t\tMax cargo:" << /*weigth*/1 << "kg\tPhysical resistance:" << strength << "+" << 0/*baffs*/ << endl;
+	cout << "Agility:\tExp:" << agilityExp << "/100\tLvl:" << agility << endl;
+	cout << "\t\tChance to avoid:" << agility << "%\tMobility:" << agility << endl;
+	cout << "Intelligence:\tExp:" << intelligenceExp << "/100\tLvl:" << intelligence << endl;
+	cout << "\t\tMp:" << intelligence * 5 << "\tLearnability:" << intelligence << ",Magic resistance:" << intelligence << "+" << 0/*baffs*/ << endl;
+	cout << "Endurance:\t\tExp:" << enduranceExp << "/100\tLvl:" << endurance << endl;
+	cout << "\t\tStamina:" << endurance * 5 << "\tAcceleration of regeneration:" << endurance / 2.0 << "%\n";
+	cout << "Luck:\t\tExp:" << luckExp << "/100\tLvl:" << luck << endl;
+	cout << "\t\tChance to successful action:" << luck / 2.0 << "%\n\t\tChance to find items:" << luck / 2.0 << "%\n";
+	cout << "Adaptivity:\tLvl:" << adaptivity << endl;
+	cout << "\t\tResistance:" << adaptivity << "%\tAdaptive skills:" << (adaptiveSkills ? "true":"false.You need Adp.Lvl 6") << endl;
 }
-void InventoryShow()
-{
 
-}
 
 
 
