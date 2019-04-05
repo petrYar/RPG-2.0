@@ -26,8 +26,8 @@ void Interface(char name[], const int SIZEOFNAME, int strength, int strengthExp,
 void MonstersSpawn(char **map, int rows, int cols);
 void GateToNextLvlSpawn(char **map, int rows, int cols);
 
-int Authorisation();
-void Commands(char **map, int rows, int cols);
+int Authorisation(char password[2]);
+void Commands(char **map, int rows, int cols, char password[2]);
 void ListOfCommands();
 
 int Attack();
@@ -42,6 +42,8 @@ void LocationInfo();
 int main()
 {
 	srand(time(nullptr));
+
+	char password[2]{ "/" };
 
 	int lvl = 0;
 	int experience = 0;
@@ -170,8 +172,9 @@ int main()
 ///ShowNameOfGame();
 	char **map = CreateMap(rows, cols);
 	///EnterNameOfCharacter(name, SIZEOFNAME);
-	FillMap(map, rows, cols);// сюда вводить генерацию существ
-	ShowMap(map, rows, cols);
+	///FillMap(map, rows, cols);// сюда вводить генерацию существ
+	///Commands(map, rows, cols, password);
+	///ShowMap(map, rows, cols);
 	///Move(map, rows, cols);
 	///Interface(name, SIZEOFNAME, strength, strengthExp, agility, agilityExp, intelligence, intelligenceExp,
 	///	lifeForce, lifeForceExp, endurance, enduranceExp, luck, luckExp, adaptivity, adaptiveSkills, experience, lvl);
@@ -518,8 +521,102 @@ void GateToNextLvlSpawn(char **map, int rows, int cols)
 	} while (true);
 }
 
-int Authorisation();
-void Commands(char **map, int rows, int cols);
-void ListOfCommands();
+int Authorisation(char password[2])
+{
+	char enter[2]{};
+	cout << "Enter symbol\n";
+	cin.getline(enter, 2);
+	if (nullptr != strstr(password, enter))
+	{
+		cout << "Access ALLOWED\n";
+		cout << "Entering";
+		char foolstop[6]{ "....." };
+		for (int i = 0; i < 6; i++)
+		{
+			Sleep(200);
+			cout << foolstop[i];
+		}
+		cout << endl;
+		return 1;
+	}
+	cout << "Access DENIED\n";
+	return 0;
+}
+void Commands(char **map, int rows, int cols, char password[2])
+{
+	int enter = Authorisation(password);
+	Sleep(1000);
+	system("cls");
+	if (enter == 1)
+	{
+		bool exit = false;
+		do
+		{
+			int choice;
+			cout << "1 - List of commands\n";
+			cout << "2 - Enter command\n";
+			cout << "3 - Exit\n";
+			cin >> choice;
+			switch (choice)
+			{
+			case 1:
+				system("cls");
+				ListOfCommands();
+				break;
+			case 2:
+				char command;
+				cout << "Enter 'Exit' to exit\n";
+				cin >> command;
+				switch (command)
+				{
+				case '1':
+					do
+					{
+						int rCin, cCin;
+						system("cls");
+						ShowMap(map, rows, cols);
+
+						cout << "Enter x\n";
+						cin >> rCin;
+						cout << "Enter y\n";
+						cin >> cCin;
+
+						if (map[rCin][cCin] == '#')
+						{
+							map[rCin][cCin] = ' ';
+							break;
+						}
+					} while (true);
+					system("cls");
+					break;
+				case 'Exit':
+					break;
+				default:
+					cout << "Incorrectly\n";
+					break;
+				}
+				break;
+			case 3:
+				exit = true;
+				system("cls");
+				break;
+			default:
+				cout << "Incorrectly\n";
+				break;
+			}
+		} while (exit == false);
+	}
+}
+void ListOfCommands()
+{
+	cout << "1 - DestroyWall\n";
+	cout << " - \n";
+	cout << " - \n";
+}
+
+
+
+
+
 
 
