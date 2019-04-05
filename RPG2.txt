@@ -23,7 +23,13 @@ void Move(char **map, int rows, int cols);
 void Interface(char name[], const int SIZEOFNAME, int strength, int strengthExp, int agility, int agilityExp, int intelligence, int intelligenceExp,
 	int lifeForce, int lifeForceExp, int endurance, int enduranceExp, int luck, int luckExp, int adaptivity, bool adaptiveSkills, int experience, int lvl);
 
-void MonstersSpawn();
+void MonstersSpawn(char **map, int rows, int cols);
+void GateToNextLvlSpawn(char **map, int rows, int cols);
+
+int Authorisation();
+void Commands(char **map, int rows, int cols);
+void ListOfCommands();
+
 int Attack();
 void AttackCout();
 void experience();
@@ -161,11 +167,11 @@ int main()
 	}
 */
 
-	///ShowNameOfGame();
+///ShowNameOfGame();
 	char **map = CreateMap(rows, cols);
 	///EnterNameOfCharacter(name, SIZEOFNAME);
-	///FillMap(map, rows, cols);
-	///ShowMap(map, rows, cols);
+	FillMap(map, rows, cols);// сюда вводить генерацию существ
+	ShowMap(map, rows, cols);
 	///Move(map, rows, cols);
 	///Interface(name, SIZEOFNAME, strength, strengthExp, agility, agilityExp, intelligence, intelligenceExp,
 	///	lifeForce, lifeForceExp, endurance, enduranceExp, luck, luckExp, adaptivity, adaptiveSkills, experience, lvl);
@@ -359,7 +365,9 @@ void FillMap(char **map, int rows, int cols)
 			if (map[r][c] == '=')
 				map[r][c] = ' ';
 
+	GateToNextLvlSpawn(map, rows, cols);
 	PlayerCreate(map, rows, cols);
+	MonstersSpawn(map, rows, cols);
 }
 void ShowMap(char **map, int rows, int cols)
 {
@@ -381,20 +389,6 @@ void EnterNameOfCharacter(char name[], const int SIZEOFNAME)
 {
 	cout << "Enter name of your character\n";
 	cin.getline(name, SIZEOFNAME);
-}
-void PlayerCreate(char **map, int rows, int cols)
-{
-	do
-	{
-		int rRand = rand() % (rows - 2) + 1;
-		int cRand = rand() % (cols - 2) + 1;
-
-		if (map[rRand][cRand] == ' ')
-		{
-			map[rRand][cRand] = 'o';
-			break;
-		}
-	} while (true);
 }
 void Move(char **map, int rows, int cols)
 {
@@ -465,11 +459,67 @@ void Interface(char name[], const int SIZEOFNAME, int strength, int strengthExp,
 	cout << "Luck:\t\tExp:" << luckExp << "/100\tLvl:" << luck << endl;
 	cout << "\t\tChance to successful action:" << luck / 2.0 << "%\n\t\tChance to find items:" << luck / 2.0 << "%\n";
 	cout << "Adaptivity:\tLvl:" << adaptivity << endl;
-	cout << "\t\tResistance:" << adaptivity << "%\tAdaptive skills:" << (adaptiveSkills ? "true":"false.You need Adp.Lvl 6") << endl;
+	cout << "\t\tResistance:" << adaptivity << "%\tAdaptive skills:" << (adaptiveSkills ? "true" : "false.You need Adp.Lvl 6") << endl;
 }
 
+void PlayerCreate(char **map, int rows, int cols)
+{
+	do
+	{
+		int rRand = rand() % (rows - 2) + 1;
+		int cRand = rand() % (cols - 2) + 1;
 
+		if (map[rRand][cRand] == ' ' && map[rRand][cRand] != 'M' && map[rRand][cRand] != 'E')
+		{
+			map[rRand][cRand] = 'o';
+			break;
+		}
+	} while (true);
+}
+void MonstersSpawn(char **map, int rows, int cols)
+{
+	for (int i = 0; i < ((rows + cols) / 2) / 4; i++)
+		do
+		{
+			int rRand = rand() % (rows - 2) + 1;
+			int cRand = rand() % (cols - 2) + 1;
 
+			if (map[rRand][cRand] == ' ' && map[rRand][cRand] != 'o' && map[rRand][cRand] != 'E')
+			{
+				map[rRand][cRand] = 'M';
+				break;
+			}
+		} while (true);
+}
+void GateToNextLvlSpawn(char **map, int rows, int cols)
+{
+	do
+	{
+		int rRand = rand() % (rows - 2) + 1;
+		int cRand = rand() % (cols - 2) + 1;
 
+		if (map[rRand][cRand] == ' ' && map[rRand][cRand] != 'o')
+		{
+			int walls = 0;
+			if (map[rRand + 1][cRand] == '#')
+				walls++;
+			if (map[rRand - 1][cRand] == '#')
+				walls++;
+			if (map[rRand][cRand + 1] == '#')
+				walls++;
+			if (map[rRand][cRand - 1] == '#')
+				walls++;
+			if (walls == 3)
+			{
+				map[rRand][cRand] = 'E';
+				break;
+			}
+		}
+	} while (true);
+}
+
+int Authorisation();
+void Commands(char **map, int rows, int cols);
+void ListOfCommands();
 
 
