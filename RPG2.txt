@@ -182,13 +182,15 @@ int main()
 ///ShowNameOfGame();
 	char **map = CreateMap(rows, cols);
 	///EnterNameOfCharacter(name, SIZEOFNAME);
-	///FillMap(map, rows, cols);// сюда вводить генерацию существ
-	///Commands(map, rows, cols, password);
-	///ShowMap(map, rows, cols);
-	///Move(map, rows, cols,strength, strengthExp, agility, agilityExp, intelligence, intelligenceExp, lifeForce,
-	///lifeForceExp, endurance, enduranceExp, luck, luckExp, adaptivity, adaptiveSkills, experience, lvl);
-	///Interface(name, SIZEOFNAME, strength, strengthExp, agility, agilityExp, intelligence, intelligenceExp,
-	///	lifeForce, lifeForceExp, endurance, enduranceExp, luck, luckExp, adaptivity, adaptiveSkills, experience, lvl);
+	FillMap(map, rows, cols);// сюда вводить генерацию существ
+	do
+	{
+		Move(map, rows, cols, strength, strengthExp, agility, agilityExp, intelligence, intelligenceExp, lifeForce,
+			lifeForceExp, endurance, enduranceExp, luck, luckExp, adaptivity, adaptiveSkills, experience, lvl);
+		///Commands(map, rows, cols, password);
+		///Interface(name, SIZEOFNAME, strength, strengthExp, agility, agilityExp, intelligence, intelligenceExp,
+		///	lifeForce, lifeForceExp, endurance, enduranceExp, luck, luckExp, adaptivity, adaptiveSkills, experience, lvl);
+	} while (true);
 
 
 	/*do
@@ -412,7 +414,8 @@ void Move(char **map, int rows, int cols, int strength, int strengthExp, int agi
 	{
 		char directionOfMove;
 		int rCopy, cCopy;
-
+		system("cls");
+		ShowMap(map, rows, cols);
 		do
 		{
 			cout << "1 - move up\n2 - move right\n3 - move down\n4 - move left\n";
@@ -427,9 +430,10 @@ void Move(char **map, int rows, int cols, int strength, int strengthExp, int agi
 					cCopy = c;
 				}
 
-		int attack = isAttack(map, rows, cols, directionOfMove, rCopy, cCopy);
+		int attack = 0;
+		attack = isAttack(map, rows, cols, directionOfMove, rCopy, cCopy);
 
-		if (attack = 0)
+		if (attack == 0)
 		{
 			if (directionOfMove == '1' && map[rCopy - 1][cCopy] == ' ')
 			{
@@ -455,10 +459,45 @@ void Move(char **map, int rows, int cols, int strength, int strengthExp, int agi
 				map[rCopy][cCopy - 1] = 'o';
 				break;
 			}
+
+
+			if (directionOfMove == '1' && map[rCopy - 1][cCopy] == 'E')
+			{
+				map[rCopy][cCopy] = ' ';
+				map[rCopy - 1][cCopy] = 'o';
+				cout << "Entering on 2 floor\n";
+				Sleep(5000);
+				break;
+			}
+			else if (directionOfMove == '2' && map[rCopy][cCopy + 1] == 'E')
+			{
+				map[rCopy][cCopy] = ' ';
+				map[rCopy][cCopy + 1] = 'o';
+				cout << "Entering on 2 floor\n";
+				Sleep(5000);
+				break;
+			}
+			else if (directionOfMove == '3' && map[rCopy + 1][cCopy] == 'E')
+			{
+				map[rCopy][cCopy] = ' ';
+				map[rCopy + 1][cCopy] = 'o';
+				cout << "Entering on 2 floor\n";
+				Sleep(5000);
+				break;
+			}
+			else if (directionOfMove == '4' && map[rCopy][cCopy - 1] == 'E')
+			{
+				map[rCopy][cCopy] = ' ';
+				map[rCopy][cCopy - 1] = 'o';
+				cout << "Entering on 2 floor\n";
+				Sleep(5000);
+					break;
+			}
 		}
 
-		if (attack = 1)
+		if (attack == 1)
 		{
+			system("cls");
 			Attack(strength, strengthExp, agility, agilityExp, intelligence, intelligenceExp, lifeForce,
 				lifeForceExp, endurance, enduranceExp, luck, luckExp, adaptivity, adaptiveSkills, experience, lvl);
 		}
@@ -674,29 +713,30 @@ void Attack(int strength, int strengthExp, int agility, int agilityExp, int inte
 	int choice, magic, playerDamage;
 
 	int playerMp = intelligence * 5;
-	int playerMp = intelligence * 5;
-	int enemyHp = 1000;
+	int playerHp = lifeForce * 20;
+	int enemyMp = 100;
+	int enemyHp = 100;
+
 	int fireball = 100;
 	int fireballMp = 50;
-	int enemyResistanceMagic = 20;
 	int bolter = 60;
 	int bolterMp = 30;
-	int enemyMp = 100;
 	int manaDrain = 100;
 	int punch = 50;
-	int enemyResistancePhysic = 20;
 	int kick = 20;
-	int enemyPhysicDamage = 50;
-	int playerHp = lifeForce * 20;
-	int enemyMagicDamage = 75;
+
 	int playerResistanceMagic = intelligence;
 	int playerResistancePhysic = strength;
+	int enemyResistanceMagic = 20;
+	int enemyResistancePhysic = 20;
+
+	int enemyPhysicDamage = 50;
+	int enemyMagicDamage = 75;
 
 	int enemyRegeneration = 10;
 	int playerRegeneration = 10;
 	int enemyMpRegeneration = 10;
 	int playerMpRegeneration = 10;
-
 	do
 	{
 		cout << turn << " Turn of battle\n\n";
@@ -808,9 +848,15 @@ void Attack(int strength, int strengthExp, int agility, int agilityExp, int inte
 		}
 
 		if (enemyHp <= 0)
+		{
 			cout << "You win, enemy fainted\n";
+			break;
+		}
 		else if (playerHp <= 0)
+		{
 			cout << "You fainted\n";
+			break;
+		}
 		else
 		{
 			cout << "Hp enemy: " << enemyHp << endl;
@@ -827,8 +873,10 @@ void Attack(int strength, int strengthExp, int agility, int agilityExp, int inte
 			cout << "Player Hp: " << playerHp << endl;
 			cout << "Player Mp: " << playerMp << endl;
 			turn++;
+			Sleep(5000);
+			system("cls");
 		}
-	} while (playerHp > 0 && enemyHp > 0);
+	} while (playerHp > 0 || enemyHp > 0);
 }
 
 
