@@ -17,8 +17,8 @@ void ShowMap(char **map, int rows, int cols);
 void DeleteMap(char **map, int rows);
 
 void EnterNameOfCharacter(char name[], const int SIZEOFNAME);
-void Move(char name[], const int SIZEOFNAME, char **map, int rows, int cols, int strength, int strengthExp, int agility, int agilityExp, int intelligence, int intelligenceExp, int lifeForce, int lifeForceExp, int endurance, int enduranceExp, int luck, int luckExp, int adaptivity, int experience, int lvl);
-void Interface(char name[], const int SIZEOFNAME, int strength, int strengthExp, int agility, int agilityExp, int intelligence, int intelligenceExp, int lifeForce, int lifeForceExp, int endurance, int enduranceExp, int luck, int luckExp, int adaptivity, int experience, int lvl);
+void Move(char name[], const int SIZEOFNAME, char **map, int rows, int cols);
+void Interface(char name[], const int SIZEOFNAME);
 
 void PlayerCreate(char **map, int rows, int cols);
 void MonstersSpawn(char **map, int rows, int cols);
@@ -29,12 +29,10 @@ void Commands(char **map, int rows, int cols);
 void ListOfCommands();
 
 int isAttack(char **map, int rows, int cols, int directionOfMove, int rCopy, int cCopy);
-void Fight(int strength, int strengthExp, int agility, int agilityExp, int intelligence, int intelligenceExp, int lifeForce, int lifeForceExp, int endurance, int enduranceExp, int luck, int luckExp, int adaptivity, int experience, int lvl);
-void Repartition(int strengthExpPlus, int agilityExpPlus, int intelligenceExpPlus, int lifeForceExpPlus, int enduranceExpPlus, int luckExpPlus, int experiencePlus, int strength, int strengthExp, int agility, int agilityExp, int intelligence, int intelligenceExp, int lifeForce, int lifeForceExp, int endurance, int enduranceExp, int luck, int luckExp, int adaptivity, int experience, int lvl);
+void Fight();
+void Repartition(int strengthExpPlus, int agilityExpPlus, int intelligenceExpPlus, int lifeForceExpPlus, int enduranceExpPlus, int luckExpPlus, int experiencePlus);
 
 void AttackCout();
-void ExperienceAfterBattle(int strength, int strengthExp, int agility, int agilityExp, int intelligence, int intelligenceExp,
-	int lifeForce, int lifeForceExp, int endurance, int enduranceExp, int luck, int luckExp, int adaptivity, int experience, int lvl);
 void ShowAttackOfEnemy();
 void AttackOfEnemy();
 
@@ -43,27 +41,28 @@ void LootGenerator();
 void InventoryShow();
 void LocationInfo();
 
+int lvl = 0;
+int experience = 0;
+int lifeForce = 10;
+int lifeForceExp = 0;
+int strength = 10;
+int strengthExp = 0;
+int agility = 10;
+int agilityExp = 0;
+int intelligence = 10;
+int intelligenceExp = 0;
+int endurance = 10;
+int enduranceExp = 0;
+int luck = 1;
+int luckExp = 0;
+int adaptivity = 6;
+	///int leadership = 1;
+	///int leadershipExp = 0;
+
 int main()
 {
 	srand(time(nullptr));
 
-	int lvl = 0;
-	int experience = 0;
-	int lifeForce = 10;
-	int lifeForceExp = 0;
-	int strength = 10;
-	int strengthExp = 0;
-	int agility = 10;
-	int agilityExp = 0;
-	int intelligence = 10;
-	int intelligenceExp = 0;
-	int endurance = 10;
-	int enduranceExp = 0;
-	int luck = 1;
-	int luckExp = 0;
-	int adaptivity = 8;
-	///int leadership = 1;
-	///int leadershipExp = 0;
 
 	bool exit1 = false;
 	char choice2;
@@ -78,8 +77,7 @@ int main()
 	FillMap(map, rows, cols);// сюда вводить генерацию существ
 	do
 	{
-		Move(name, SIZEOFNAME, map, rows, cols, strength, strengthExp, agility, agilityExp, intelligence, intelligenceExp, lifeForce,
-			lifeForceExp, endurance, enduranceExp, luck, luckExp, adaptivity, experience, lvl);
+		Move(name, SIZEOFNAME, map, rows, cols);
 	} while (true);
 
 
@@ -296,8 +294,7 @@ void EnterNameOfCharacter(char name[], const int SIZEOFNAME)
 	cout << "Enter name of your character\n";
 	cin.getline(name, SIZEOFNAME);
 }
-void Move(char name[], const int SIZEOFNAME, char **map, int rows, int cols, int strength, int strengthExp, int agility, int agilityExp, int intelligence, int intelligenceExp,
-	int lifeForce, int lifeForceExp, int endurance, int enduranceExp, int luck, int luckExp, int adaptivity, int experience, int lvl)
+void Move(char name[], const int SIZEOFNAME, char **map, int rows, int cols)
 {
 	do
 	{
@@ -312,8 +309,7 @@ void Move(char name[], const int SIZEOFNAME, char **map, int rows, int cols, int
 			if (directionOfMove == '/')
 				Commands(map, rows, cols);
 			else if (directionOfMove == '5')
-				Interface(name, SIZEOFNAME, strength, strengthExp, agility, agilityExp, intelligence, intelligenceExp,
-					lifeForce, lifeForceExp, endurance, enduranceExp, luck, luckExp, adaptivity, experience, lvl);
+				Interface(name, SIZEOFNAME);
 		} while (directionOfMove < '1' || directionOfMove > '4');
 
 		for (int r = 0; r < rows; r++)
@@ -390,22 +386,20 @@ void Move(char name[], const int SIZEOFNAME, char **map, int rows, int cols, int
 		}
 
 		if (attack == 1)
-			Fight(strength, strengthExp, agility, agilityExp, intelligence, intelligenceExp, lifeForce,
-				lifeForceExp, endurance, enduranceExp, luck, luckExp, adaptivity, experience, lvl);
+			Fight();
 	} while (true);
 	system("cls");
 	ShowMap(map, rows, cols);
 }
 
-void Interface(char name[], const int SIZEOFNAME, int strength, int strengthExp, int agility, int agilityExp, int intelligence, int intelligenceExp,
-	int lifeForce, int lifeForceExp, int endurance, int enduranceExp, int luck, int luckExp, int adaptivity, int experience, int lvl)
+void Interface(char name[], const int SIZEOFNAME)
 {
 	system("cls");
 	for (int i = 0; i < SIZEOFNAME; i++)
 		cout << name[i];
 	cout << "\tExperience:" << experience << "\tLvl:" << lvl << endl;
 	cout << "\t To the next level:" << (5000 + lvl * 10000) - experience << "\tAll exp that need:" << 5000 + lvl * 10000 << endl;
-	cout << "LifeForce:\tExp:" << lifeForceExp << "/100\tLvl:" << lifeForce << endl;
+	cout << "LifeForce:\tExp:" << lifeForceExp << "/150\tLvl:" << lifeForce << endl;
 	cout << "\t\tHp:" << /*playerHp*/lifeForce * 20 << "/" << lifeForce * 20 << endl;
 	cout << "Strength:\tExp:" << strengthExp << "/100\tLvl:" << strength << endl;
 	cout << "\t\tMax cargo:" << /*weigth*/1 << "kg\tPhysical resistance:" << strength << "+" << 0/*baffs*/ << endl;
@@ -606,8 +600,7 @@ int isAttack(char **map, int rows, int cols, int directionOfMove, int rCopy, int
 	}
 	return 0;
 }
-void Fight(int strength, int strengthExp, int agility, int agilityExp, int intelligence, int intelligenceExp,
-	int lifeForce, int lifeForceExp, int endurance, int enduranceExp, int luck, int luckExp, int adaptivity, int experience, int lvl)
+void Fight()
 {
 	system("cls");
 	int turn = 0;
@@ -813,54 +806,60 @@ void Fight(int strength, int strengthExp, int agility, int agilityExp, int intel
 	{
 		experiencePlus -= 5000 + lvl * 10000;
 		lvl++;
-		experience = experiencePlus;
 	}
+	experience = experiencePlus;
 	if (adaptivity >= 6)
-		Repartition(strengthExpPlus, agilityExpPlus, intelligenceExpPlus, lifeForceExpPlus, enduranceExpPlus, luckExpPlus, experiencePlus, strength, strengthExp, agility, agilityExp, intelligence, intelligenceExp, lifeForce, lifeForceExp, endurance, enduranceExp, luck, luckExp, adaptivity, experience, lvl);
+		Repartition(strengthExpPlus, agilityExpPlus, intelligenceExpPlus, lifeForceExpPlus, enduranceExpPlus, luckExpPlus, experiencePlus/*, strength, strengthExp, agility, agilityExp, intelligence, intelligenceExp, lifeForce, lifeForceExp, endurance, enduranceExp, luck, luckExp, adaptivity, experience, lvl*/);
 }
-void Repartition(int strengthExpPlus, int agilityExpPlus, int intelligenceExpPlus, int lifeForceExpPlus, int enduranceExpPlus, int luckExpPlus, int experiencePlus, int strength, int strengthExp, int agility, int agilityExp, int intelligence, int intelligenceExp, int lifeForce, int lifeForceExp, int endurance, int enduranceExp, int luck, int luckExp, int adaptivity, int experience, int lvl)
+void Repartition(int strengthExpPlus, int agilityExpPlus, int intelligenceExpPlus, int lifeForceExpPlus, int enduranceExpPlus, int luckExpPlus, int experiencePlus)
 {
-	while (strengthExpPlus >= 100)// DON'T WORK
+	strengthExpPlus += strengthExp;
+	while (strengthExpPlus >= 100)
 	{
 		strengthExpPlus -= 100;
 		strength++;
-		strengthExp = strengthExpPlus;
 	}
+	strengthExp = strengthExpPlus;
 
+	agilityExpPlus += agilityExp;
 	while (agilityExpPlus >= 100)
 	{
 		agilityExpPlus -= 100;
 		agility++;
-		agilityExp = agilityExpPlus;
 	}
+	agilityExp = agilityExpPlus;
 
+	intelligenceExpPlus += intelligenceExp;
 	while (intelligenceExpPlus >= 100)
 	{
 		intelligenceExpPlus -= 100;
 		intelligence++;
-		intelligenceExp = intelligenceExpPlus;
 	}
+	intelligenceExp = intelligenceExpPlus;
 
+	lifeForceExpPlus += lifeForceExp;
 	while (lifeForceExpPlus >= 150)
 	{
 		lifeForceExpPlus -= 150;
 		lifeForce++;
-		lifeForceExp = lifeForceExpPlus;
 	}
+	lifeForceExp = lifeForceExpPlus;
 
+	enduranceExpPlus += enduranceExp;
 	while (enduranceExpPlus >= 100)
 	{
 		enduranceExpPlus -= 100;
 		endurance++;
-		enduranceExp = enduranceExpPlus;
 	}
+	enduranceExp = enduranceExpPlus;
 
+	luckExpPlus += luckExp;
 	while (luckExpPlus >= 100)
 	{
 		luckExpPlus -= 100;
 		luck++;
-		luckExp = luckExpPlus;
 	}
+	luckExp = luckExpPlus;
 }
 
 
