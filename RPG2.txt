@@ -61,7 +61,7 @@ int main()
 	int enduranceExp = 0;
 	int luck = 1;
 	int luckExp = 0;
-	int adaptivity = 0;
+	int adaptivity = 8;
 	///int leadership = 1;
 	///int leadershipExp = 0;
 
@@ -311,7 +311,7 @@ void Move(char name[], const int SIZEOFNAME, char **map, int rows, int cols, int
 			cin >> directionOfMove;
 			if (directionOfMove == '/')
 				Commands(map, rows, cols);
-			else if (directionOfMove == 'I')
+			else if (directionOfMove == '5')
 				Interface(name, SIZEOFNAME, strength, strengthExp, agility, agilityExp, intelligence, intelligenceExp,
 					lifeForce, lifeForceExp, endurance, enduranceExp, luck, luckExp, adaptivity, experience, lvl);
 		} while (directionOfMove < '1' || directionOfMove > '4');
@@ -657,6 +657,7 @@ void Fight(int strength, int strengthExp, int agility, int agilityExp, int intel
 		cout << "Your turn\n\n";
 		cout << "Attack with (1)MP or (2)physic?\n";
 		cin >> choice;
+		system("cls");
 		if (choice == 1)
 		{
 			cout << "Type of your magic: \n (1)Fireball(dmg:100,cost:50mp) \n (2)Bolter(dmg:60,cost:30mp)\n";
@@ -664,6 +665,7 @@ void Fight(int strength, int strengthExp, int agility, int agilityExp, int intel
 			cout << " (4)Mana explosion(dmg:1 000 % mp(of enemy),cost:80% of your mp)\n(Only if enemy has HP higher than 10 000)\n";
 
 			cin >> magic;
+			system("cls");
 			switch (magic)
 			{
 			case(1):
@@ -720,6 +722,7 @@ void Fight(int strength, int strengthExp, int agility, int agilityExp, int intel
 		{
 			cout << "Enter type of your dmg: \n (1)Punch(dmg:50,cost:0mp) \n (2)Kick(dmg:20,cost:0mp)\n";
 			cin >> playerDamage;
+			system("cls");
 			switch (playerDamage)
 			{
 			case(1):
@@ -768,7 +771,8 @@ void Fight(int strength, int strengthExp, int agility, int agilityExp, int intel
 			cout << "Enemy skip the turn\n";
 			break;
 		}
-
+		Sleep(5000);
+		system("cls");
 		if (enemyHp <= 0)
 		{
 			cout << "You win, enemy fainted\n";
@@ -787,10 +791,14 @@ void Fight(int strength, int strengthExp, int agility, int agilityExp, int intel
 			cout << "Player Hp:\t" << playerHp << "/" << playerHpMax << endl;
 			cout << "Player Mp:\t" << playerMp << "/" << playerMpMax << endl << endl;
 			cout << "Regeneration...\n\n";
-			enemyHp += enemyRegeneration;
-			playerHp += playerRegeneration;
-			enemyMp += enemyMpRegeneration;
-			playerMp += playerMpRegeneration;
+			if (enemyHp <= enemyHpMax - enemyRegeneration)
+				enemyHp += enemyRegeneration;
+			if (playerHp <= playerHpMax - playerRegeneration)
+				playerHp += playerRegeneration;
+			if (enemyMp <= enemyMpMax - enemyMpRegeneration)
+				enemyMp += enemyMpRegeneration;
+			if (playerMp <= playerMpMax - playerMpRegeneration)
+				playerMp += playerMpRegeneration;
 			cout << "Hp enemy:\t" << enemyHp << "/" << enemyHpMax << endl;
 			cout << "Mp enemy:\t" << enemyMp << "/" << enemyMpMax << endl;
 			cout << "Player Hp:\t" << playerHp << "/" << playerHpMax << endl;
@@ -801,12 +809,18 @@ void Fight(int strength, int strengthExp, int agility, int agilityExp, int intel
 		}
 	} while (playerHp > 0 || enemyHp > 0);
 
+	while (experiencePlus >= 5000 + lvl * 10000)
+	{
+		experiencePlus -= 5000 + lvl * 10000;
+		lvl++;
+		experience = experiencePlus;
+	}
 	if (adaptivity >= 6)
 		Repartition(strengthExpPlus, agilityExpPlus, intelligenceExpPlus, lifeForceExpPlus, enduranceExpPlus, luckExpPlus, experiencePlus, strength, strengthExp, agility, agilityExp, intelligence, intelligenceExp, lifeForce, lifeForceExp, endurance, enduranceExp, luck, luckExp, adaptivity, experience, lvl);
 }
 void Repartition(int strengthExpPlus, int agilityExpPlus, int intelligenceExpPlus, int lifeForceExpPlus, int enduranceExpPlus, int luckExpPlus, int experiencePlus, int strength, int strengthExp, int agility, int agilityExp, int intelligence, int intelligenceExp, int lifeForce, int lifeForceExp, int endurance, int enduranceExp, int luck, int luckExp, int adaptivity, int experience, int lvl)
 {
-	while (strengthExpPlus >= 100)
+	while (strengthExpPlus >= 100)// DON'T WORK
 	{
 		strengthExpPlus -= 100;
 		strength++;
@@ -846,13 +860,6 @@ void Repartition(int strengthExpPlus, int agilityExpPlus, int intelligenceExpPlu
 		luckExpPlus -= 100;
 		luck++;
 		luckExp = luckExpPlus;
-	}
-
-	while (experiencePlus >= 5000 + lvl * 10000)
-	{
-		experiencePlus -= 5000 + lvl * 10000;
-		lvl++;
-		experience = experiencePlus;
 	}
 }
 
