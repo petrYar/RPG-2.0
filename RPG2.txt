@@ -11,24 +11,24 @@ int ShowAndChoosePlayMenu();
 void ShowRules();
 void ShowCreators();
 
-char **CreateMap(int rows, int cols);
-void FillMap(char **map, int rows, int cols);
-void ShowMap(char **map, int rows, int cols);
-void DeleteMap(char **map, int rows);
+char** CreateMap(int rows, int cols);
+void FillMap(char** map, int rows, int cols);
+void ShowMap(char** map, int rows, int cols);
+void DeleteMap(char** map, int rows);
 
 void EnterNameOfCharacter(char name[], const int SIZEOFNAME);
-void Move(char name[], const int SIZEOFNAME, char **map, int rows, int cols);
+void Move(char name[], const int SIZEOFNAME, char** map, int rows, int cols);
 void Interface(char name[], const int SIZEOFNAME);
 
-void PlayerCreate(char **map, int rows, int cols);
-void MonstersSpawn(char **map, int rows, int cols);
-void GateToNextLvlSpawn(char **map, int rows, int cols);
+void PlayerCreate(char** map, int rows, int cols);
+void MonstersSpawn(char** map, int rows, int cols);
+void GateToNextLvlSpawn(char** map, int rows, int cols);
 
 int Authorisation(char password[2]);
-void Commands(char name[], const int SIZEOFNAME, char **map, int rows, int cols);
+void Commands(char name[], const int SIZEOFNAME, char** map, int rows, int cols);
 void ListOfCommands();
 
-int isAttack(char **map, int rows, int cols, int directionOfMove, int rCopy, int cCopy);
+int isAttack(char** map, int rows, int cols, int directionOfMove, int rCopy, int cCopy);
 void Fight(char name[], const int SIZEOFNAME);
 void AttackOfEnemy(int enemyPhysicDamage, int playerHp, int playerResistancePhysic, int lifeForceExpPlus, int turn, int enemyMagicDamage, int enemyMp, int playerResistanceMagic);
 
@@ -38,7 +38,7 @@ void SkillImprovement(char name[], const int SIZEOFNAME);
 void LocationInfo();
 void IconsInfo();
 
-void LootGenerator(char **map, int rows, int cols);
+void LootGenerator(char** map, int rows, int cols);
 void GiveLoot();
 void InventoryShow();
 
@@ -82,7 +82,7 @@ int main()
 	int dungeonLvl = 1;
 
 	ShowNameOfGame();
-	char **map = CreateMap(rows, cols);
+	char** map = CreateMap(rows, cols);
 	EnterNameOfCharacter(name, SIZEOFNAME);
 
 	do
@@ -213,14 +213,14 @@ void ShowCreators()
 	cout << endl;
 }
 
-char **CreateMap(int rows, int cols)
+char** CreateMap(int rows, int cols)
 {
-	char **map = new char*[rows];
+	char** map = new char* [rows];
 	for (int i = 0; i < rows; i++)
 		map[i] = new char[cols];
 	return map;
 }
-void FillMap(char **map, int rows, int cols)
+void FillMap(char** map, int rows, int cols)
 {
 	for (int r = 0; r < rows; r++)
 		for (int c = 0; c < cols; c++)
@@ -242,7 +242,16 @@ void FillMap(char **map, int rows, int cols)
 
 		for (int i = 0; i < 10; i++)
 		{
-			int direction = rand() % 4 + 1;
+			int direction = rand() % 16 + 1;
+
+			if (direction >= 1 && direction <= 4)
+				direction = 1;
+			else if (direction >= 5 && direction <= 8)
+				direction = 2;
+			else if (direction >= 9 && direction <= 12)
+				direction = 3;
+			else if (direction >= 13 && direction <= 16)
+				direction = 4;
 
 			switch (direction)
 			{
@@ -250,41 +259,61 @@ void FillMap(char **map, int rows, int cols)
 				for (int r = 0; r < rows; r++)
 					for (int c = 0; c < cols; c++)
 						if (map[r][c] == ' ')
-							if ((map[r - 1][c] != ' ' && map[r - 1][c + 1] != ' ' && map[r - 1][c - 1] != ' ') && r - 1 > 1)
-							{
-								map[r - 1][c] = ' ';
-								map[r][c] = '=';
-							}
+						{
+							if (r + 5 < rows - 1 && map[r + 5][c] == '=')
+								;
+							else
+								if ((map[r - 1][c] != ' ' && map[r - 1][c + 1] != ' ' && map[r - 1][c - 1] != ' ') && r - 1 > 1)
+								{
+									map[r - 1][c] = ' ';
+									map[r][c] = '=';
+								}
+						}
 				break;
 			case 2://right
 				for (int r = 0; r < rows; r++)
 					for (int c = 0; c < cols; c++)
 						if (map[r][c] == ' ')
-							if ((map[r][c + 1] != ' ' && map[r - 1][c + 1] != ' ' && map[r + 1][c + 1] != ' ') && c + 1 < cols - 1)
-							{
-								map[r][c + 1] = ' ';
-								map[r][c] = '=';
-							}
+						{
+							if (c - 5 > 1 && map[r][c - 5] == '=')
+								;
+							else
+								if ((map[r][c + 1] != ' ' && map[r - 1][c + 1] != ' ' && map[r + 1][c + 1] != ' ') && c + 1 < cols - 1)
+								{
+									map[r][c + 1] = ' ';
+									map[r][c] = '=';
+								}
+						}
 				break;
 			case 3://down
 				for (int r = 0; r < rows; r++)
 					for (int c = 0; c < cols; c++)
 						if (map[r][c] == ' ')
-							if ((map[r + 1][c] != ' ' && map[r + 1][c + 1] != ' ' && map[r + 1][c - 1] != ' ') && r + 1 < rows - 1)
-							{
-								map[r + 1][c] = ' ';
-								map[r][c] = '=';
-							}
+						{
+							if (r - 5 > 1 && map[r - 5][c] == '=')
+								;
+							else
+								if ((map[r + 1][c] != ' ' && map[r + 1][c + 1] != ' ' && map[r + 1][c - 1] != ' ') && r + 1 < rows - 1)
+								{
+									map[r + 1][c] = ' ';
+									map[r][c] = '=';
+								}
+						}
 				break;
 			case 4://left
 				for (int r = 0; r < rows; r++)
 					for (int c = 0; c < cols; c++)
 						if (map[r][c] == ' ')
-							if ((map[r][c - 1] != ' ' && map[r - 1][c - 1] != ' ' && map[r + 1][c - 1] != ' ') && c - 1 > 1)
-							{
-								map[r][c - 1] = ' ';
-								map[r][c] = '=';
-							}
+						{
+							if (c + 5 < cols - 1 && map[r][c + 5] == '=')
+								;
+							else
+								if ((map[r][c - 1] != ' ' && map[r - 1][c - 1] != ' ' && map[r + 1][c - 1] != ' ') && c - 1 > 1)
+								{
+									map[r][c - 1] = ' ';
+									map[r][c] = '=';
+								}
+						}
 				break;
 			default:
 				cout << "Error\n";
@@ -302,7 +331,7 @@ void FillMap(char **map, int rows, int cols)
 	PlayerCreate(map, rows, cols);
 	MonstersSpawn(map, rows, cols);
 }
-void ShowMap(char **map, int rows, int cols)
+void ShowMap(char** map, int rows, int cols)
 {
 	for (int r = 0; r < rows; r++)
 	{
@@ -311,7 +340,7 @@ void ShowMap(char **map, int rows, int cols)
 		cout << endl;
 	}
 }
-void DeleteMap(char **map, int rows)
+void DeleteMap(char** map, int rows)
 {
 	for (int i = 0; i < rows; i++)
 		delete[]map[i];
@@ -323,7 +352,7 @@ void EnterNameOfCharacter(char name[], const int SIZEOFNAME)
 	cout << "Enter name of your character\n";
 	cin.getline(name, SIZEOFNAME);
 }
-void Move(char name[], const int SIZEOFNAME, char **map, int rows, int cols)
+void Move(char name[], const int SIZEOFNAME, char** map, int rows, int cols)
 {
 	do
 	{
@@ -333,7 +362,7 @@ void Move(char name[], const int SIZEOFNAME, char **map, int rows, int cols)
 		{
 			system("cls");
 			ShowMap(map, rows, cols);
-			cout << "1 - move up\t5 - Interface\n2 - move right\t6 - LocationInfo\n3 - move down\t7 - IconsInfo\n4 - move left\n";
+			cout << "1 - move up\t5 - Interface\t\tDon't have way to Exit?\n2 - move right\t6 - LocationInfo\tCommands help you.\n3 - move down\t7 - IconsInfo\n4 - move left\n";
 			cin >> directionOfMove;
 			if (directionOfMove == '/')
 				Commands(name, SIZEOFNAME, map, rows, cols);
@@ -366,21 +395,21 @@ void Move(char name[], const int SIZEOFNAME, char **map, int rows, int cols)
 				//GiveLoot();
 				break;
 			}
-			else if (directionOfMove == '1' && map[rCopy + 1][cCopy] == 'r')
+			else if (directionOfMove == '2' && map[rCopy][cCopy + 1] == 'r')
 			{
 				map[rCopy][cCopy] = ' ';
 				map[rCopy - 1][cCopy] = 'o';
 				//GiveLoot();
 				break;
 			}
-			else if (directionOfMove == '1' && map[rCopy][cCopy - 1] == 'r')
+			else if (directionOfMove == '3' && map[rCopy + 1][cCopy] == 'r')
 			{
 				map[rCopy][cCopy] = ' ';
 				map[rCopy - 1][cCopy] = 'o';
 				//GiveLoot();
 				break;
 			}
-			else if (directionOfMove == '1' && map[rCopy][cCopy + 1] == 'r')
+			else if (directionOfMove == '4' && map[rCopy][cCopy - 1] == 'r')
 			{
 				map[rCopy][cCopy] = ' ';
 				map[rCopy - 1][cCopy] = 'o';
@@ -389,28 +418,28 @@ void Move(char name[], const int SIZEOFNAME, char **map, int rows, int cols)
 			}
 
 			//chest
-			if (directionOfMove == '1' && map[rCopy + 1][cCopy] == 'c')
+			if (directionOfMove == '1' && map[rCopy][cCopy + 1] == 'c')
 			{
 				map[rCopy][cCopy] = ' ';
 				map[rCopy - 1][cCopy] = 'o';
 				//GiveLoot();
 				break;
 			}
-			else if (directionOfMove == '1' && map[rCopy - 1][cCopy] == 'c')
+			else if (directionOfMove == '2' && map[rCopy - 1][cCopy] == 'c')
 			{
 				map[rCopy][cCopy] = ' ';
 				map[rCopy - 1][cCopy] = 'o';
 				//GiveLoot();
 				break;
 			}
-			else if (directionOfMove == '1' && map[rCopy][cCopy + 1] == 'c')
+			else if (directionOfMove == '3' && map[rCopy + 1][cCopy] == 'c')
 			{
 				map[rCopy][cCopy] = ' ';
 				map[rCopy - 1][cCopy] = 'o';
 				//GiveLoot();
 				break;
 			}
-			else if (directionOfMove == '1' && map[rCopy][cCopy - 1] == 'c')
+			else if (directionOfMove == '4' && map[rCopy][cCopy - 1] == 'c')
 			{
 				map[rCopy][cCopy] = ' ';
 				map[rCopy - 1][cCopy] = 'o';
@@ -508,10 +537,10 @@ void Interface(char name[], const int SIZEOFNAME)
 	else
 		cout << "false.You need Adp.Lvl 6" << endl;
 
-	Sleep(10000);
+	system("pause");
 }
 
-void PlayerCreate(char **map, int rows, int cols)
+void PlayerCreate(char** map, int rows, int cols)
 {
 	do
 	{
@@ -525,7 +554,7 @@ void PlayerCreate(char **map, int rows, int cols)
 		}
 	} while (true);
 }
-void MonstersSpawn(char **map, int rows, int cols)
+void MonstersSpawn(char** map, int rows, int cols)
 {
 	for (int i = 0; i < ((rows + cols) / 2) / 4; i++)
 		do
@@ -540,7 +569,7 @@ void MonstersSpawn(char **map, int rows, int cols)
 			}
 		} while (true);
 }
-void GateToNextLvlSpawn(char **map, int rows, int cols)
+void GateToNextLvlSpawn(char** map, int rows, int cols)
 {
 	do
 	{
@@ -570,6 +599,7 @@ void GateToNextLvlSpawn(char **map, int rows, int cols)
 int Authorisation(char password[2])
 {
 	char enter[2]{};
+	cin.get();
 	cout << "Enter symbol\n";
 	cin.getline(enter, 2);
 	if (nullptr != strstr(password, enter))
@@ -585,10 +615,20 @@ int Authorisation(char password[2])
 		cout << endl;
 		return 1;
 	}
-	cout << "Access DENIED\n";
+	else
+	{
+	cout << "Access ";
+	char denied[13]{ "D E N I E D" };
+	for (int i = 0; i < 13; i++)
+	{
+		Sleep(100);
+		cout << denied[i];
+	}
+	cout << endl;
 	return 0;
+	}
 }
-void Commands(char name[], const int SIZEOFNAME, char **map, int rows, int cols)
+void Commands(char name[], const int SIZEOFNAME, char** map, int rows, int cols)
 {
 	char password[2]{ "/" };// PASSWORD to console
 
@@ -667,10 +707,10 @@ void ListOfCommands()
 {
 	cout << "1 - DestroyWall\n";
 	cout << "2 - +5 Skills\n";
-	cout << " - \n";
+	cout << "3 - InstaKill(In battle)\n";
 }
 
-int isAttack(char **map, int rows, int cols, int directionOfMove, int rCopy, int cCopy)
+int isAttack(char** map, int rows, int cols, int directionOfMove, int rCopy, int cCopy)
 {
 	if (directionOfMove == '1' && map[rCopy - 1][cCopy] == 'M')
 	{
@@ -702,7 +742,8 @@ void Fight(char name[], const int SIZEOFNAME)
 {
 	system("cls");
 	int turn = 0;
-	int choice, magic, playerDamage;
+	char choice;
+	int magic, playerDamage;
 
 	int playerMpMax = intelligence * 5;
 	int playerHpMax = lifeForce * 20;
@@ -749,7 +790,7 @@ void Fight(char name[], const int SIZEOFNAME)
 		cout << "Attack with (1)MP or (2)physic?\n";
 		cin >> choice;
 		system("cls");
-		if (choice == 1)
+		if (choice == '1')
 		{
 			cout << "Type of your magic: \n (1)Fireball(dmg:100,cost:50mp) \n (2)Bolter(dmg:60,cost:30mp)\n";
 			cout << " (3)Mana drain(dmg:0,cost:100mp,receive:25% of enemy mp)\n";
@@ -809,7 +850,7 @@ void Fight(char name[], const int SIZEOFNAME)
 				break;
 			}
 		}
-		else if (choice == 2)
+		else if (choice == '2')
 		{
 			cout << "Enter type of your dmg: \n (1)Punch(dmg:50,cost:0mp) \n (2)Kick(dmg:20,cost:0mp)\n";
 			cin >> playerDamage;
@@ -1051,7 +1092,7 @@ void LocationInfo()
 
 			break;*/
 	}
-	Sleep(2000);
+	system("pause");
 }
 void IconsInfo()
 {
@@ -1062,10 +1103,10 @@ void IconsInfo()
 	cout << "'E' - Stairs to next floor\n";
 	cout << "'r' - Remains of killed hero\n";
 	cout << "'c' - Chest with loot\n";
-	Sleep(5000);
+	system("pause");
 }
 
-void LootGenerator(char **map, int rows, int cols)
+void LootGenerator(char** map, int rows, int cols)
 {
 	for (int i = 0; i < ((rows + cols) / 2) / 4 - 1; i++)
 	{
