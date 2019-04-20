@@ -75,8 +75,8 @@ int main()
 
 	bool exit1 = false;
 	char choice2;
-	int rows = rand() % 12 + 9;
-	int cols = rand() % 12 + 9;
+	int rows = rand() % 12 + 19;//change map
+	int cols = rand() % 12 + 19;//change map
 	const int SIZEOFNAME = 15;
 	char name[SIZEOFNAME]{};
 	int dungeonLvl = 1;
@@ -98,7 +98,6 @@ int main()
 				do//генерация уровня
 				{
 					FillMap(map, rows, cols);// сюда вводить генерацию существ
-					LootGenerator(map, rows, cols);
 					nextFloor = false;
 					locationID = rand() % 4;
 					do
@@ -322,14 +321,65 @@ void FillMap(char** map, int rows, int cols)
 		}
 	}
 
+	int rCopy, cCopy, rCopy2, cCopy2;
+	int amountOfX = 0;
+
 	for (int r = 0; r < rows; r++)
 		for (int c = 0; c < cols; c++)
-			if (map[r][c] == '=')
+		{
+			if (map[r][c] == ' ' && amountOfX == 0)
+			{
+				rCopy = r;
+				cCopy = c;
+				map[r][c] = 'X';
+				amountOfX++;
+			}
+			if (map[r][c] == ' ' && amountOfX == 1)
+			{
+				rCopy2 = r;
+				cCopy2 = c;
+				map[r][c] = 'x';//путь от Х --> х
+
+				do
+				{
+					if (rCopy < rCopy2)//если снизу x
+					{
+						map[rCopy][cCopy] = '=';
+						rCopy++;
+						map[rCopy][cCopy] = 'X';
+					}
+					else if (rCopy > rCopy2)//если сверху 2 Х
+					{
+						map[rCopy][cCopy] = '=';
+						rCopy--;
+						map[rCopy][cCopy] = 'X';
+					}
+					else if (cCopy < cCopy2)//если справа 2 Х
+					{
+						map[rCopy][cCopy] = '=';
+						cCopy++;
+						map[rCopy][cCopy] = 'X';
+					}
+					else if (cCopy > cCopy2)//если слева 2 Х
+					{
+						map[rCopy][cCopy] = '=';
+						cCopy--;
+						map[rCopy][cCopy] = 'X';
+					}
+				} while (map[r][c] != 'X');
+			}
+		}
+
+
+	for (int r = 0; r < rows; r++)
+		for (int c = 0; c < cols; c++)
+			if (map[r][c] == '=' /*|| map[r][c] == 'X'*/)
 				map[r][c] = ' ';
 
 	GateToNextLvlSpawn(map, rows, cols);
 	PlayerCreate(map, rows, cols);
 	MonstersSpawn(map, rows, cols);
+	LootGenerator(map, rows, cols);
 }
 void ShowMap(char** map, int rows, int cols)
 {
@@ -617,15 +667,15 @@ int Authorisation(char password[2])
 	}
 	else
 	{
-	cout << "Access ";
-	char denied[13]{ "D E N I E D" };
-	for (int i = 0; i < 13; i++)
-	{
-		Sleep(100);
-		cout << denied[i];
-	}
-	cout << endl;
-	return 0;
+		cout << "Access ";
+		char denied[13]{ "D E N I E D" };
+		for (int i = 0; i < 13; i++)
+		{
+			Sleep(100);
+			cout << denied[i];
+		}
+		cout << endl;
+		return 0;
 	}
 }
 void Commands(char name[], const int SIZEOFNAME, char** map, int rows, int cols)
