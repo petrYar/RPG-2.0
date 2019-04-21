@@ -16,9 +16,18 @@ void FillMap(char** map, int rows, int cols);
 void ShowMap(char** map, int rows, int cols);
 void DeleteMap(char** map, int rows);
 
+void CavesGenerator(char** map, int rows, int cols);
+void PlainsGenerator(char** map, int rows, int cols);
+void ForestGenerator(char** map, int rows, int cols);
+void DesertGenerator(char** map, int rows, int cols);
+void RiftGenerator(char** map, int rows, int cols);
+
 void EnterNameOfCharacter(char name[], const int SIZEOFNAME);
 void Move(char name[], const int SIZEOFNAME, char** map, int rows, int cols);
+
 void Interface(char name[], const int SIZEOFNAME);
+void LocationInfo();
+void IconsInfo();
 
 void PlayerCreate(char** map, int rows, int cols);
 void MonstersSpawn(char** map, int rows, int cols);
@@ -35,16 +44,13 @@ void AttackOfEnemy(int enemyPhysicDamage, int playerHp, int playerResistancePhys
 void Repartition(int strengthExpPlus, int agilityExpPlus, int intelligenceExpPlus, int lifeForceExpPlus, int enduranceExpPlus, int luckExpPlus, int experiencePlus);
 void SkillImprovement(char name[], const int SIZEOFNAME);
 
-void LocationInfo();
-void IconsInfo();
-
 void LootGenerator(char** map, int rows, int cols);
 void GiveLoot();
 void InventoryShow();
 
-int skills = 0;
+int locationID;
 
-int locationID = 0;//пока никак не влияет (кроме генер. лута)
+int skills = 0;
 
 int lvl = 0;
 int experience = 0;
@@ -72,7 +78,6 @@ int main()
 {
 	srand(time(nullptr));
 
-
 	bool exit1 = false;
 	char choice2;
 	int rows = rand() % 12 + 19;//change map
@@ -97,9 +102,19 @@ int main()
 			case '1':
 				do//генерация уровня
 				{
+					locationID = rand() % 20;
+					if (locationID == 0 || locationID == 5 || locationID == 10 || locationID == 15)
+						locationID = 0;
+					else if (locationID == 1 || locationID == 6 || locationID == 11 || locationID == 16)
+						locationID = 1;
+					else if (locationID == 2 || locationID == 7 || locationID == 12 || locationID == 17)
+						locationID = 2;
+					else if (locationID == 3 || locationID == 8 || locationID == 13 || locationID == 18)
+						locationID = 3;
+					else if (locationID == 4 || locationID == 9 || locationID == 14 || locationID == 19)
+						locationID = 4;
 					FillMap(map, rows, cols);// сюда вводить генерацию существ
 					nextFloor = false;
-					locationID = rand() % 4;
 					do
 					{
 						Move(name, SIZEOFNAME, map, rows, cols);//прохождение
@@ -221,6 +236,129 @@ char** CreateMap(int rows, int cols)
 }
 void FillMap(char** map, int rows, int cols)
 {
+	switch (locationID)
+	{
+	case 0:
+		PlainsGenerator(map, rows, cols);
+		break;
+	case 1:
+		ForestGenerator(map, rows, cols);
+		break;
+	case 2:
+		DesertGenerator(map, rows, cols);
+		break;
+	case 3:
+		CavesGenerator(map, rows, cols);
+		break;
+	case 4:
+		RiftGenerator(map, rows, cols);
+		break;
+	default:
+		cout << "Error in generating map\n";
+		break;
+	}
+
+	GateToNextLvlSpawn(map, rows, cols);
+	PlayerCreate(map, rows, cols);
+	MonstersSpawn(map, rows, cols);
+	LootGenerator(map, rows, cols);
+}
+void ShowMap(char** map, int rows, int cols)
+{
+	for (int r = 0; r < rows; r++)
+	{
+		for (int c = 0; c < cols; c++)
+			cout << map[r][c];
+		cout << endl;
+	}
+}
+void DeleteMap(char** map, int rows)
+{
+	for (int i = 0; i < rows; i++)
+		delete[]map[i];
+	delete[]map;
+}
+
+void PlainsGenerator(char** map, int rows, int cols)
+{
+	for (int r = 0; r < rows; r++)
+		for (int c = 0; c < cols; c++)
+		{
+			if (r == 0 || c == 0 || c == cols - 1 || r == rows - 1)
+				map[r][c] = '#';
+			else
+				map[r][c] = ' ';
+		}
+
+	for (int a = 0; a < (rows + cols) / 2; a++)
+	{
+		do
+		{
+			int rRand = rand() % (rows - 2) + 1;
+			int cRand = rand() % (cols - 2) + 1;
+
+			if (map[rRand][cRand] == ' ')
+			{
+				map[rRand][cRand] = '#';
+				break;
+			}
+		} while (true);
+	}
+}
+void ForestGenerator(char** map, int rows, int cols)
+{
+	for (int r = 0; r < rows; r++)
+		for (int c = 0; c < cols; c++)
+		{
+			if (r == 0 || c == 0 || c == cols - 1 || r == rows - 1)
+				map[r][c] = '#';
+			else
+				map[r][c] = ' ';
+		}
+
+	for (int a = 0; a < rows + cols; a++)
+	{
+		do
+		{
+			int rRand = rand() % (rows - 2) + 1;
+			int cRand = rand() % (cols - 2) + 1;
+
+			if (map[rRand][cRand] == ' ')
+			{
+				map[rRand][cRand] = '#';
+				break;
+			}
+		} while (true);
+	}
+}
+void DesertGenerator(char** map, int rows, int cols)
+{
+	for (int r = 0; r < rows; r++)
+		for (int c = 0; c < cols; c++)
+		{
+			if (r == 0 || c == 0 || c == cols - 1 || r == rows - 1)
+				map[r][c] = '#';
+			else
+				map[r][c] = ' ';
+		}
+
+	for (int a = 0; a < ((rows + cols) / 2) / 4; a++)
+	{
+		do
+		{
+			int rRand = rand() % (rows - 2) + 1;
+			int cRand = rand() % (cols - 2) + 1;
+
+			if (map[rRand][cRand] == ' ')
+			{
+				map[rRand][cRand] = '#';
+				break;
+			}
+		} while (true);
+	}
+}
+void CavesGenerator(char** map, int rows, int cols)
+{
 	for (int r = 0; r < rows; r++)
 		for (int c = 0; c < cols; c++)
 			map[r][c] = '#';
@@ -322,19 +460,19 @@ void FillMap(char** map, int rows, int cols)
 	}
 
 	int rCopy, cCopy, rCopy2, cCopy2;
-	int amountOfX = 0;
+	bool XOnTheMap = false;
 
 	for (int r = 0; r < rows; r++)
 		for (int c = 0; c < cols; c++)
 		{
-			if (map[r][c] == ' ' && amountOfX == 0)
+			if (map[r][c] == ' ' && XOnTheMap == false)
 			{
 				rCopy = r;
 				cCopy = c;
 				map[r][c] = 'X';
-				amountOfX++;
+				XOnTheMap = true;
 			}
-			if (map[r][c] == ' ' && amountOfX == 1)
+			if (map[r][c] == ' ' && XOnTheMap == true)
 			{
 				rCopy2 = r;
 				cCopy2 = c;
@@ -370,31 +508,70 @@ void FillMap(char** map, int rows, int cols)
 			}
 		}
 
-
 	for (int r = 0; r < rows; r++)
 		for (int c = 0; c < cols; c++)
-			if (map[r][c] == '=' /*|| map[r][c] == 'X'*/)
+			if (map[r][c] == '=' || map[r][c] == 'X')
 				map[r][c] = ' ';
-
-	GateToNextLvlSpawn(map, rows, cols);
-	PlayerCreate(map, rows, cols);
-	MonstersSpawn(map, rows, cols);
-	LootGenerator(map, rows, cols);
 }
-void ShowMap(char** map, int rows, int cols)
+void RiftGenerator(char** map, int rows, int cols)
 {
 	for (int r = 0; r < rows; r++)
-	{
 		for (int c = 0; c < cols; c++)
-			cout << map[r][c];
-		cout << endl;
-	}
-}
-void DeleteMap(char** map, int rows)
-{
-	for (int i = 0; i < rows; i++)
-		delete[]map[i];
-	delete[]map;
+			map[r][c] = '#';
+
+	int rRand, cRand;
+
+	int direction = rand() % 2;
+	do
+	{
+		if (direction == 0)
+		{
+			rRand = rand() % (cols - 4) + 3;
+			cRand = 1;
+		}
+		else if (direction == 1)
+		{
+			rRand = 1;
+			cRand = rand() % (rows - 4) + 3;
+		}
+
+		map[rRand][cRand] = ' ';
+	} while (rRand >= rows - 2 || cRand >= cols - 2);
+
+	bool exit = false;
+
+	for (int r = 0; r < rows; r++)
+		if (exit == false)
+			for (int c = 0; c < cols; c++)
+				if (exit == false)
+					if (map[r][c] == ' ')
+						switch (direction)
+						{
+						case 0:
+							while (c < cols - 1)
+							{
+								map[r + 2][c] = ' ';
+								map[r + 1][c] = ' ';
+								map[r][c] = ' ';
+								map[r - 1][c] = ' ';
+								map[r - 2][c] = ' ';
+								c++;
+							}
+							exit = true;
+							break;
+						case 1:
+							while (r < rows - 1)
+							{
+								map[r][c + 2] = ' ';
+								map[r][c + 1] = ' ';
+								map[r][c] = ' ';
+								map[r][c - 1] = ' ';
+								map[r][c - 2] = ' ';
+								r++;
+							}
+							exit = true;
+							break;
+						}
 }
 
 void EnterNameOfCharacter(char name[], const int SIZEOFNAME)
@@ -589,6 +766,54 @@ void Interface(char name[], const int SIZEOFNAME)
 
 	system("pause");
 }
+void LocationInfo()
+{
+	system("cls");
+	switch (locationID)
+	{
+	case 0:
+		cout << "Plains\n";//По идее: пустое поле , иногда с деревьями, монстрами, НПС
+		cout << "Empty field with trees , monsters and NPC\n";
+		break;
+	case 1:
+		cout << "Forest\n";//По идее: массив леса с тропинками, монстрами
+		cout << "Field with trees , monsters\n";
+		break;
+	case 2:
+		cout << "Desert\n";//По идее: пустое поле , иногда с камнями и лутом погибших, монстрами
+		cout << "Empty field with stones , remains , monsters and NPC\n";
+		break;
+	case 3:
+		cout << "Caves\n";//По идее: пещера , с ходами , монстрами
+		cout << "Caves in mountain with monsters\n";
+		break;
+	case 4:
+		cout << "Rift\n";//По идее: тропа над бездной , с монстрами
+		cout << "Abyss with monsters\n";
+		break;
+		/*case 5:
+
+			break;
+		case 6:
+
+			break;
+		case 7:
+
+			break;*/
+	}
+	system("pause");
+}
+void IconsInfo()
+{
+	system("cls");
+	cout << "'#' - Wall(in Cave),Tree(in Forest,Plains),Stone(in Desert)\n";
+	cout << "'o' - Player\n";
+	cout << "'M' - Monster\n";
+	cout << "'E' - Stairs to next floor\n";
+	cout << "'r' - Remains of killed hero\n";
+	cout << "'c' - Chest with loot\n";
+	system("pause");
+}
 
 void PlayerCreate(char** map, int rows, int cols)
 {
@@ -637,7 +862,13 @@ void GateToNextLvlSpawn(char** map, int rows, int cols)
 				walls++;
 			if (map[rRand][cRand - 1] == '#')
 				walls++;
-			if (walls == 3)
+
+			if ((locationID == 0 || locationID == 1 || locationID <= 2 || locationID == 4) && walls == 2)
+			{
+				map[rRand][cRand] = 'E';
+				break;
+			}
+			else if (locationID == 3 && walls == 3)
 			{
 				map[rRand][cRand] = 'E';
 				break;
@@ -1112,50 +1343,6 @@ void SkillImprovement(char name[], const int SIZEOFNAME)
 	} while (skills > 0);
 }
 
-void LocationInfo()
-{										//пока никак не влияет(кроме генератора лута по пустине)
-	system("cls");
-	switch (locationID)
-	{
-	case 0:
-		cout << "Plains\n";//По идее: пустое поле , иногда с деревьями, монстрами, НПС
-		break;
-	case 1:
-		cout << "Forest\n";//По идее: массив леса с тропинками, монстрами
-		break;
-	case 2:
-		cout << "Desert\n";//По идее: пустое поле , иногда с камнями и лутом погибших, монстрами
-		break;
-	case 3:
-		cout << "Caves\n";//По идее: пещера , с ходами , монстрами
-		break;
-		/*case 4:
-
-			break;
-		case 5:
-
-			break;
-		case 6:
-
-			break;
-		case 7:
-
-			break;*/
-	}
-	system("pause");
-}
-void IconsInfo()
-{
-	system("cls");
-	cout << "'#' - Wall(in Cave),Tree(in Forest,Plains),Stone(in Desert)\n";
-	cout << "'o' - Player\n";
-	cout << "'M' - Monster\n";
-	cout << "'E' - Stairs to next floor\n";
-	cout << "'r' - Remains of killed hero\n";
-	cout << "'c' - Chest with loot\n";
-	system("pause");
-}
-
 void LootGenerator(char** map, int rows, int cols)
 {
 	for (int i = 0; i < ((rows + cols) / 2) / 4 - 1; i++)
@@ -1188,5 +1375,3 @@ void LootGenerator(char** map, int rows, int cols)
 			} while (true);
 		}
 }
-
-
