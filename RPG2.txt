@@ -74,6 +74,21 @@ bool nextFloor = false;
 bool win = false;
 bool death = false;
 
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~В будущем~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Обновление 3.0
+|~~~~~~~~~~|
+Добавление :
+Лут(через рандом)[3.0]
+Сборка артефактов за лут(материал)[3.1]
+Улучшение врага[3.2]
+Добавление режимов : Лёгкий , Средний, Сложный, Нереальный, Пекло(Только удача!Только хардкор!).[3.3]
+Обучение(Выбор на начале игры).[3.4]
+Добавление характеристик.(Голод,Жажда,Усталость,Хп,Мана)[3.5]
+График(картинка) характеристик.[3.6]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
 int main()
 {
 	srand(time(nullptr));
@@ -625,21 +640,21 @@ void Move(char name[], const int SIZEOFNAME, char** map, int rows, int cols)
 			else if (directionOfMove == '2' && map[rCopy][cCopy + 1] == 'r')
 			{
 				map[rCopy][cCopy] = ' ';
-				map[rCopy - 1][cCopy] = 'o';
+				map[rCopy][cCopy + 1] = 'o';
 				//GiveLoot();
 				break;
 			}
 			else if (directionOfMove == '3' && map[rCopy + 1][cCopy] == 'r')
 			{
 				map[rCopy][cCopy] = ' ';
-				map[rCopy - 1][cCopy] = 'o';
+				map[rCopy + 1][cCopy] = 'o';
 				//GiveLoot();
 				break;
 			}
 			else if (directionOfMove == '4' && map[rCopy][cCopy - 1] == 'r')
 			{
 				map[rCopy][cCopy] = ' ';
-				map[rCopy - 1][cCopy] = 'o';
+				map[rCopy][cCopy - 1] = 'o';
 				//GiveLoot();
 				break;
 			}
@@ -648,7 +663,7 @@ void Move(char name[], const int SIZEOFNAME, char** map, int rows, int cols)
 			if (directionOfMove == '1' && map[rCopy][cCopy + 1] == 'c')
 			{
 				map[rCopy][cCopy] = ' ';
-				map[rCopy - 1][cCopy] = 'o';
+				map[rCopy][cCopy + 1] = 'o';
 				//GiveLoot();
 				break;
 			}
@@ -662,14 +677,14 @@ void Move(char name[], const int SIZEOFNAME, char** map, int rows, int cols)
 			else if (directionOfMove == '3' && map[rCopy + 1][cCopy] == 'c')
 			{
 				map[rCopy][cCopy] = ' ';
-				map[rCopy - 1][cCopy] = 'o';
+				map[rCopy + 1][cCopy] = 'o';
 				//GiveLoot();
 				break;
 			}
 			else if (directionOfMove == '4' && map[rCopy][cCopy - 1] == 'c')
 			{
 				map[rCopy][cCopy] = ' ';
-				map[rCopy - 1][cCopy] = 'o';
+				map[rCopy][cCopy - 1] = 'o';
 				//GiveLoot();
 				break;
 			}
@@ -1024,7 +1039,8 @@ void Fight(char name[], const int SIZEOFNAME)
 	system("cls");
 	int turn = 0;
 	char choice;
-	int magic, playerDamage;
+	char magic;
+	char playerDamage;
 
 	int playerMpMax = intelligence * 5;
 	int playerHpMax = lifeForce * 20;
@@ -1081,7 +1097,7 @@ void Fight(char name[], const int SIZEOFNAME)
 			system("cls");
 			switch (magic)
 			{
-			case(1):
+			case '1':
 				if (playerMp < 50)
 					cout << "Not enough mana!Attack denied\n\n";
 				else
@@ -1092,7 +1108,7 @@ void Fight(char name[], const int SIZEOFNAME)
 					intelligenceExpPlus += fireballMp;
 					break;
 				}
-			case(2):
+			case '2':
 				if (playerMp < 30)
 					cout << "Not enough mana!Attack denied\n\n";
 				else
@@ -1103,14 +1119,14 @@ void Fight(char name[], const int SIZEOFNAME)
 					intelligenceExpPlus += bolterMp;
 					break;
 				}
-			case(3):
+			case '3':
 				cout << "You use Mana drain\n\n";
 				playerMp -= manaDrain;
 				enemyMp -= enemyMp / 100 * 25;
 				playerMp += enemyMp / 100 * 25;
 				intelligenceExpPlus += manaDrain;
 				break;
-			case(4):
+			case '4':
 				if (enemyHp < 10000)
 					cout << "Enemy has HP lower than 10 000! Attack denied\n\n";
 				else
@@ -1138,12 +1154,12 @@ void Fight(char name[], const int SIZEOFNAME)
 			system("cls");
 			switch (playerDamage)
 			{
-			case(1):
+			case '1':
 				cout << "You use Punch\n\n";
 				enemyHp -= punch - (punch / 100 * enemyResistancePhysic);
 				strengthExpPlus += punch - (punch / 100 * enemyResistancePhysic);
 				break;
-			case(2):
+			case '2':
 				cout << "You use Kick\n\n";
 				enemyHp -= kick - (kick / 100 * enemyResistancePhysic);
 				strengthExpPlus += kick - (kick / 100 * enemyResistancePhysic);
