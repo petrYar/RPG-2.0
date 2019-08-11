@@ -5,53 +5,73 @@
 #include <Windows.h>	
 using namespace std;
 
+#pragma region Show
 void ShowNameOfGame();
 int ShowAndChooseMainMenu();
 int ShowAndChoosePlayMenu();
 void ShowRules();
 void ShowCreators();
+#pragma endregion
 
+#pragma region Map
 char** CreateMap(int rows, int cols);
 void FillMap(char** map, int rows, int cols);
 void ShowMap(char** map, int rows, int cols);
 void DeleteMap(char** map, int rows);
+#pragma endregion
 
+#pragma region MapGenerators
 void CavesGenerator(char** map, int rows, int cols);
 void PlainsGenerator(char** map, int rows, int cols);
 void ForestGenerator(char** map, int rows, int cols);
 void DesertGenerator(char** map, int rows, int cols);
 void RiftGenerator(char** map, int rows, int cols);
+#pragma endregion
 
 void EnterNameOfCharacter(char name[], const int SIZEOFNAME);
 void Move(char name[], const int SIZEOFNAME, char** map, int rows, int cols);
 
+#pragma region Info
 void Interface(char name[], const int SIZEOFNAME);
 void LocationInfo();
 void IconsInfo();
+#pragma endregion
 
+#pragma region Entities
 void PlayerCreate(char** map, int rows, int cols);
 void MonstersSpawn(char** map, int rows, int cols);
 void GateToNextLvlSpawn(char** map, int rows, int cols);
+#pragma endregion
 
+#pragma region Commands
 int Authorisation(char password[2]);
 void Commands(char name[], const int SIZEOFNAME, char** map, int rows, int cols);
 void ListOfCommands();
+void Debug();
+#pragma endregion
 
+#pragma region Fight
 int isAttack(char** map, int rows, int cols, int directionOfMove, int rCopy, int cCopy);
 void Fight(char name[], const int SIZEOFNAME);
 void AttackOfEnemy(int enemyPhysicDamage, int playerHp, int playerResistancePhysic, int lifeForceExpPlus, int turn, int enemyMagicDamage, int enemyMp, int playerResistanceMagic);
+#pragma endregion
 
+#pragma region Skills
 void Repartition(int strengthExpPlus, int agilityExpPlus, int intelligenceExpPlus, int lifeForceExpPlus, int enduranceExpPlus, int luckExpPlus, int experiencePlus);
 void SkillImprovement(char name[], const int SIZEOFNAME);
+#pragma endregion
 
+#pragma region Items
 void LootGenerator(char** map, int rows, int cols);
 void GiveLoot();
 void InventoryShow();
+#pragma endregion
 
 int locationID;
 
 int skills = 0;
 
+#pragma region Stats
 int lvl = 0;
 int experience = 0;
 int lifeForce = 5;
@@ -69,10 +89,12 @@ int luckExp = 0;
 int adaptivity = 0;
 ///int leadership = 1;
 ///int leadershipExp = 0;
+#pragma endregion
 
 bool nextFloor = false;
 bool win = false;
 bool death = false;
+bool debug = false;
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~В будущем~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~In~future~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -89,6 +111,9 @@ bool death = false;
 
 инвентарь из 3 измерений?(трёхмерный)																	Inventory from 3 dimensions?Maybe...
 дебаг режим(видно действия (Генерация пещер,создания персонажа))										Debug mod (You can look what happen now(Generating caves,formation hero))
+Очистка буффера и символов из потока.																	Buffer and stream clean.
+
+Переделка на OOP(наверно)																				Remake on OOP(maybe)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
@@ -98,8 +123,8 @@ int main()
 
 	bool exit1 = false;
 	char choice2;
-	int rows = rand() % 12 + 19;//change map
-	int cols = rand() % 12 + 19;//change map
+	int rows = rand() % 12 + 19;//change map			standart:	int rows = rand() % 12 + 19;
+	int cols = rand() % 12 + 19;//change map			standart:	int cols = rand() % 12 + 19;
 	const int SIZEOFNAME = 15;
 	char name[SIZEOFNAME]{};
 	int dungeonLvl = 1;
@@ -121,16 +146,27 @@ int main()
 				do//генерация уровня
 				{
 					locationID = rand() % 20;
-					if (locationID == 0 || locationID == 5 || locationID == 10 || locationID == 15)
+					switch (locationID)
+					{
+					case 0:case 5:case 10:case 15:
 						locationID = 0;
-					else if (locationID == 1 || locationID == 6 || locationID == 11 || locationID == 16)
+						break;
+					case 1:case 6:case 11:case 16:
 						locationID = 1;
-					else if (locationID == 2 || locationID == 7 || locationID == 12 || locationID == 17)
+						break;
+					case 2:case 7:case 12:case 17:
 						locationID = 2;
-					else if (locationID == 3 || locationID == 8 || locationID == 13 || locationID == 18)
+						break;
+					case 3:case 8:case 13:case 18:
 						locationID = 3;
-					else if (locationID == 4 || locationID == 9 || locationID == 14 || locationID == 19)
+						break;
+					case 4:case 9:case 14:case 19:
 						locationID = 4;
+						break;
+					default:
+						cout << "Error in locationID\n";
+						break;
+					}
 					FillMap(map, rows, cols);// сюда вводить генерацию существ
 					nextFloor = false;
 					do
@@ -144,8 +180,13 @@ int main()
 						break;
 					}
 					dungeonLvl++;
-					cout << "Entering on " << dungeonLvl << " floor\n";
-					Sleep(2500);
+					cout << "Entering on " << dungeonLvl << " floor";
+					for (int i = 0; i < 5; i++)
+					{
+						cout << ".";
+						Sleep(500);
+					}
+					cout << endl;
 					if (dungeonLvl == 100)
 					{
 						system("cls");
@@ -180,8 +221,11 @@ int main()
 	system("pause");
 	return 0;
 }
+#pragma region Show
 void ShowNameOfGame()
 {
+	if (debug == true)
+		cout << "Entering name of game...\n";
 	char screen[] = "RPG Game";
 	for (int i = 0; i < 8; i++)
 	{
@@ -191,9 +235,10 @@ void ShowNameOfGame()
 	}
 	cout << endl;
 }
-
 int ShowAndChooseMainMenu()
 {
+	if (debug == true)
+		cout << "Entering main menu choose...\n";
 	cout << "1 - Play\n";
 	cout << "2 - Rules\n";
 	cout << "3 - Creators\n";
@@ -213,6 +258,8 @@ int ShowAndChooseMainMenu()
 }
 int ShowAndChoosePlayMenu()
 {
+	if (debug == true)
+		cout << "Entering main play choose...\n";
 	cout << "1 - Start dungeon\n";
 	cout << "2 - Return to main menu\n";
 
@@ -230,11 +277,15 @@ int ShowAndChoosePlayMenu()
 void ShowRules()
 {
 	system("cls");
+	if (debug == true)
+		cout << "Showing rules...\n";
 	cout << "Fight. Explore the world. Find loot. Picking up objects. Craft. Kill. And Win.\n";
 }
 void ShowCreators()
 {
 	system("cls");
+	if (debug == true)
+		cout << "Showing creators...\n";
 	char creator[] = "Petrashek Yaroslav";
 	for (int i = 0; i < 18; i++)
 	{
@@ -244,9 +295,13 @@ void ShowCreators()
 	}
 	cout << endl;
 }
+#pragma endregion
 
+#pragma region Map
 char** CreateMap(int rows, int cols)
 {
+	if (debug == true)
+		cout << "Creating map...\n";
 	char** map = new char* [rows];
 	for (int i = 0; i < rows; i++)
 		map[i] = new char[cols];
@@ -254,6 +309,8 @@ char** CreateMap(int rows, int cols)
 }
 void FillMap(char** map, int rows, int cols)
 {
+	if (debug == true)
+		cout << "Filling map...\n";
 	switch (locationID)
 	{
 	case 0:
@@ -283,6 +340,8 @@ void FillMap(char** map, int rows, int cols)
 }
 void ShowMap(char** map, int rows, int cols)
 {
+	if (debug == true)
+		cout << "Printing map...\n";
 	for (int r = 0; r < rows; r++)
 	{
 		for (int c = 0; c < cols; c++)
@@ -292,16 +351,22 @@ void ShowMap(char** map, int rows, int cols)
 }
 void DeleteMap(char** map, int rows)
 {
+	if (debug == true)
+		cout << "Deleting map...\n";
 	for (int i = 0; i < rows; i++)
 		delete[]map[i];
 	delete[]map;
 }
+#pragma endregion
 
+#pragma region MapGenerators
 void PlainsGenerator(char** map, int rows, int cols)
 {
 	for (int r = 0; r < rows; r++)
 		for (int c = 0; c < cols; c++)
 		{
+			if (debug == true)
+				cout << "Creating:\tx:" << c << "\ty:" << r << endl;
 			if (r == 0 || c == 0 || c == cols - 1 || r == rows - 1)
 				map[r][c] = '#';
 			else
@@ -328,6 +393,8 @@ void ForestGenerator(char** map, int rows, int cols)
 	for (int r = 0; r < rows; r++)
 		for (int c = 0; c < cols; c++)
 		{
+			if (debug == true)
+				cout << "Creating:\tx:" << c << "\ty:" << r << endl;
 			if (r == 0 || c == 0 || c == cols - 1 || r == rows - 1)
 				map[r][c] = '#';
 			else
@@ -354,6 +421,8 @@ void DesertGenerator(char** map, int rows, int cols)
 	for (int r = 0; r < rows; r++)
 		for (int c = 0; c < cols; c++)
 		{
+			if (debug == true)
+				cout << "Creating:\tx:" << c << "\ty:" << r << endl;
 			if (r == 0 || c == 0 || c == cols - 1 || r == rows - 1)
 				map[r][c] = '#';
 			else
@@ -377,9 +446,15 @@ void DesertGenerator(char** map, int rows, int cols)
 }
 void CavesGenerator(char** map, int rows, int cols)
 {
+	if (debug == true)
+		cout << "Creating caves\n";
 	for (int r = 0; r < rows; r++)
 		for (int c = 0; c < cols; c++)
+		{
+			if (debug == true)
+				cout << "Creating:\tx:" << c << "\ty:" << r << endl;
 			map[r][c] = '#';
+		}
 
 	for (int a = 0; a < ((rows + cols) / 2) / 4; a++)
 	{
@@ -535,7 +610,11 @@ void RiftGenerator(char** map, int rows, int cols)
 {
 	for (int r = 0; r < rows; r++)
 		for (int c = 0; c < cols; c++)
+		{
+			if (debug == true)
+				cout << "Creating:\tx:" << c << "\ty:" << r << endl;
 			map[r][c] = '#';
+		}
 
 	int rRand, cRand;
 
@@ -591,9 +670,12 @@ void RiftGenerator(char** map, int rows, int cols)
 							break;
 						}
 }
+#pragma endregion
 
 void EnterNameOfCharacter(char name[], const int SIZEOFNAME)
 {
+	if (debug == true)
+		cout << "Entering name of character...\n";
 	cout << "Enter name of your character\n";
 	cin.getline(name, SIZEOFNAME);
 }
@@ -601,22 +683,37 @@ void Move(char name[], const int SIZEOFNAME, char** map, int rows, int cols)
 {
 	do
 	{
+		if (debug == true)
+			cout << "Moving...\n";
 		char directionOfMove;
 		int rCopy, cCopy;
 		do
 		{
 			system("cls");
 			ShowMap(map, rows, cols);
-			cout << "1 - move up\t5 - Interface\t\tDon't have way to Exit?\n2 - move right\t6 - LocationInfo\tCommands help you.\n3 - move down\t7 - IconsInfo\n4 - move left\n";
+			cout << "1 - move up\t5 - Interface\t\tDon't have way to Exit?\n2 - move right\t6 - LocationInfo\tCommands help you.\n3 - move down\t7 - IconsInfo\n4 - move left\t8 - Debug mod\n";
 			cin >> directionOfMove;
-			if (directionOfMove == '/')
+			switch (directionOfMove)
+			{
+			case '/':
 				Commands(name, SIZEOFNAME, map, rows, cols);
-			else if (directionOfMove == '5')
+				break;
+			case '5':
 				Interface(name, SIZEOFNAME);
-			else if (directionOfMove == '6')
+				break;
+			case '6':
 				LocationInfo();
-			else if (directionOfMove == '7')
+				break;
+			case '7':
 				IconsInfo();
+				break;
+			case '8':
+				Debug();
+				break;
+			default:
+				cout << "Error on entering direction of move\n";
+				break;
+			}
 		} while (directionOfMove < '1' || directionOfMove > '4');
 
 		for (int r = 0; r < rows; r++)
@@ -663,17 +760,17 @@ void Move(char name[], const int SIZEOFNAME, char** map, int rows, int cols)
 			}
 
 			//chest
-			if (directionOfMove == '1' && map[rCopy][cCopy + 1] == 'c')
-			{
-				map[rCopy][cCopy] = ' ';
-				map[rCopy][cCopy + 1] = 'o';
-				//GiveLoot();
-				break;
-			}
-			else if (directionOfMove == '2' && map[rCopy - 1][cCopy] == 'c')
+			if (directionOfMove == '1' && map[rCopy - 1][cCopy] == 'c')
 			{
 				map[rCopy][cCopy] = ' ';
 				map[rCopy - 1][cCopy] = 'o';
+				//GiveLoot();
+				break;
+			}
+			else if (directionOfMove == '2' && map[rCopy][cCopy + 1] == 'c')
+			{
+				map[rCopy][cCopy] = ' ';
+				map[rCopy][cCopy + 1] = 'o';
 				//GiveLoot();
 				break;
 			}
@@ -756,9 +853,12 @@ void Move(char name[], const int SIZEOFNAME, char** map, int rows, int cols)
 	ShowMap(map, rows, cols);
 }
 
+#pragma region Info
 void Interface(char name[], const int SIZEOFNAME)
 {
 	system("cls");
+	if (debug == true)
+		cout << "Showing interface...\n";
 	for (int i = 0; i < SIZEOFNAME; i++)
 		cout << name[i];
 	cout << "\tExperience:" << experience << "\tLvl:" << lvl << endl;
@@ -787,6 +887,8 @@ void Interface(char name[], const int SIZEOFNAME)
 void LocationInfo()
 {
 	system("cls");
+	if (debug == true)
+		cout << "Showing location info...\n";
 	switch (locationID)
 	{
 	case 0:
@@ -824,6 +926,8 @@ void LocationInfo()
 void IconsInfo()
 {
 	system("cls");
+	if (debug == true)
+		cout << "Showing icons info...\n";
 	cout << "'#' - Wall(in Cave),Tree(in Forest,Plains),Stone(in Desert)\n";
 	cout << "'o' - Player\n";
 	cout << "'M' - Monster\n";
@@ -832,9 +936,13 @@ void IconsInfo()
 	cout << "'c' - Chest with loot\n";
 	system("pause");
 }
+#pragma endregion
 
+#pragma region Entities
 void PlayerCreate(char** map, int rows, int cols)
 {
+	if (debug == true)
+		cout << "Player creating...\n";
 	do
 	{
 		int rRand = rand() % (rows - 2) + 1;
@@ -849,6 +957,8 @@ void PlayerCreate(char** map, int rows, int cols)
 }
 void MonstersSpawn(char** map, int rows, int cols)
 {
+	if (debug == true)
+		cout << "Monster spawn...\n";
 	for (int i = 0; i < ((rows + cols) / 2) / 4; i++)
 		do
 		{
@@ -864,6 +974,8 @@ void MonstersSpawn(char** map, int rows, int cols)
 }
 void GateToNextLvlSpawn(char** map, int rows, int cols)
 {
+	if (debug == true)
+		cout << "Gate creating...\n";
 	do
 	{
 		int rRand = rand() % (rows - 2) + 1;
@@ -894,9 +1006,13 @@ void GateToNextLvlSpawn(char** map, int rows, int cols)
 		}
 	} while (true);
 }
+#pragma endregion
 
+#pragma region Commands
 int Authorisation(char password[2])
 {
+	if (debug == true)
+		cout << "Authorisation...\n";
 	char enter[2]{};
 	cin.get();
 	cout << "Enter symbol\n";
@@ -929,6 +1045,8 @@ int Authorisation(char password[2])
 }
 void Commands(char name[], const int SIZEOFNAME, char** map, int rows, int cols)
 {
+	if (debug == true)
+		cout << "Entering commands...\n";
 	char password[2]{ "/" };// PASSWORD to console
 
 	int enter = Authorisation(password);
@@ -939,18 +1057,18 @@ void Commands(char name[], const int SIZEOFNAME, char** map, int rows, int cols)
 		bool exit = false;
 		do
 		{
-			int choice;
+			char choice;
 			cout << "1 - List of commands\n";
 			cout << "2 - Enter command\n";
 			cout << "3 - Exit\n";
 			cin >> choice;
 			switch (choice)
 			{
-			case 1:
+			case '1':
 				system("cls");
 				ListOfCommands();
 				break;
-			case 2:
+			case '2':
 				char command;
 				cout << "Enter 'Exit' to exit\n";
 				cin >> command;
@@ -990,13 +1108,13 @@ void Commands(char name[], const int SIZEOFNAME, char** map, int rows, int cols)
 					break;
 				}
 				break;
-			case 3:
+			case '3':
 				exit = true;
 				system("cls");
 				break;
 			default:
-				cout << "Incorrectly\n";
 				system("cls");
+				cout << "Incorrectly\n";
 				break;
 			}
 		} while (exit == false);
@@ -1004,13 +1122,42 @@ void Commands(char name[], const int SIZEOFNAME, char** map, int rows, int cols)
 }
 void ListOfCommands()
 {
+	if (debug == true)
+		cout << "Showing list of commands...\n";
 	cout << "1 - DestroyWall\n";
 	cout << "2 - +5 Skills\n";
 	cout << "3 - InstaKill(In battle)\n";
 }
+void Debug()
+{
+	system("cls");
+	char debugSwitch;
+	do
+	{
+		cout << "1 - Activate\n";
+		cout << "2 - Deactivate\n";
+		cin >> debugSwitch;
+	} while (debugSwitch > '2' || debugSwitch < '1');
+	switch (debugSwitch)
+	{
+	case '1':
+		debug = true;
+		break;
+	case '2':
+		debug = false;
+		break;
+	default:
+		cout << "Error on entering debug mod\n";
+		break;
+	}
+}
+#pragma endregion
 
+#pragma region Fight
 int isAttack(char** map, int rows, int cols, int directionOfMove, int rCopy, int cCopy)
 {
+	if (debug == true)
+		cout << "Attack check...\n";
 	if (directionOfMove == '1' && map[rCopy - 1][cCopy] == 'M')
 	{
 		map[rCopy][cCopy] = ' ';
@@ -1040,6 +1187,8 @@ int isAttack(char** map, int rows, int cols, int directionOfMove, int rCopy, int
 void Fight(char name[], const int SIZEOFNAME)
 {
 	system("cls");
+	if (debug == true)
+		cout << "Start fighting...\n";
 	int turn = 0;
 	char choice;
 	char magic;
@@ -1228,7 +1377,8 @@ void Fight(char name[], const int SIZEOFNAME)
 }
 void AttackOfEnemy(int enemyPhysicDamage, int playerHp, int playerResistancePhysic, int lifeForceExpPlus, int turn, int enemyMagicDamage, int enemyMp, int playerResistanceMagic)
 {
-
+	if (debug == true)
+		cout << "Enemy attack...\n";
 	cout << "Turn of enemy......\n\n";
 	int enemyChoice = rand() % 2;
 	switch (enemyChoice)
@@ -1260,9 +1410,13 @@ void AttackOfEnemy(int enemyPhysicDamage, int playerHp, int playerResistancePhys
 	Sleep(5000);
 	system("cls");
 }
+#pragma endregion
 
+#pragma region Skills
 void Repartition(int strengthExpPlus, int agilityExpPlus, int intelligenceExpPlus, int lifeForceExpPlus, int enduranceExpPlus, int luckExpPlus, int experiencePlus)
 {
+	if (debug == true)
+		cout << "Repartition of skills..\n";
 	strengthExpPlus += strengthExp;
 	while (strengthExpPlus >= 100)
 	{
@@ -1319,6 +1473,8 @@ void Repartition(int strengthExpPlus, int agilityExpPlus, int intelligenceExpPlu
 }
 void SkillImprovement(char name[], const int SIZEOFNAME)
 {
+	if (debug == true)
+		cout << "Skills upgrading...\n";
 	do
 	{
 		system("cls");
@@ -1361,9 +1517,13 @@ void SkillImprovement(char name[], const int SIZEOFNAME)
 		}
 	} while (skills > 0);
 }
+#pragma endregion
 
+#pragma region Items
 void LootGenerator(char** map, int rows, int cols)
 {
+	if (debug == true)
+		cout << "Generating loot...\n";
 	for (int i = 0; i < ((rows + cols) / 2) / 4 - 1; i++)
 	{
 		do
@@ -1394,3 +1554,4 @@ void LootGenerator(char** map, int rows, int cols)
 			} while (true);
 		}
 }
+#pragma endregion
